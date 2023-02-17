@@ -61,18 +61,16 @@ const deletePost = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 });
 exports.deletePost = deletePost;
 const updatePost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { title, description, url, status } = req.body;
-    if (!title) {
+    const { description, image, } = req.body;
+    if (!description || !image) {
         return res
             .status(400)
-            .json({ success: false, message: 'Title is required' });
+            .json({ success: false, message: 'description is required' });
     }
     try {
         let updatePost = {
-            title,
-            description: description || '',
-            url: (url.startsWith('https://') ? url : `https://${url}`) || '',
-            status: status || 'to learn',
+            description: description,
+            image: image,
         };
         const postUpdateCondition = { _id: req.params.id, user: req.userId };
         updatePost = yield Post_1.default.findOneAndUpdate(postUpdateCondition, updatePost, {
@@ -100,19 +98,17 @@ const updatePost = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 });
 exports.updatePost = updatePost;
 const createPost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { title, description, url, status } = req.body;
+    const { description, image } = req.body;
     // validation
-    if (!title) {
+    if (!description || !image) {
         return res
             .status(400)
             .json({ success: false, message: 'Title is required' });
     }
     try {
         const newPost = new Post_1.default({
-            title,
             description,
-            url: url.startsWith('https://') ? url : `https://${url}`,
-            status: status || 'to learn',
+            image: [image],
             user: req.userId,
         });
         yield newPost.save();

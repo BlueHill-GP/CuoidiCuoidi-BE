@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
+import mongoose, { ObjectId } from 'mongoose';
 import verifyToken from '../middleware/auth';
-import Post from '../models/Post';
+import Post, { IPost } from '../models/Post';
 
 interface AuthenticatedRequest extends Request {
   userId: string;
@@ -52,19 +53,17 @@ const deletePost = async (req: AuthenticatedRequest, res: Response) => {
 };
 
 const updatePost = async (req: AuthenticatedRequest, res: Response) => {
-  const { title, description, url, status } = req.body;
-  if (!title) {
+  const { description, image,  }:IPost = req.body;
+  if (!description ||!image) {
     return res
       .status(400)
-      .json({ success: false, message: 'Title is required' });
+      .json({ success: false, message: 'description is required' });
   }
 
   try {
     let updatePost: any = {
-      title,
-      description: description || '',
-      url: (url.startsWith('https://') ? url : `https://${url}`) || '',
-      status: status || 'to learn',
+      description: description,
+      image: image,
     };
 
     const postUpdateCondition = { _id: req.params.id, user: req.userId };
@@ -94,21 +93,19 @@ const updatePost = async (req: AuthenticatedRequest, res: Response) => {
 };
 
 const createPost = async (req: AuthenticatedRequest, res: Response) => {
-  const { title, description, url, status } = req.body;
+  const {description, image } = req.body;
 
   // validation
-  if (!title) {
+  if (!description || !image) {
     return res
       .status(400)
       .json({ success: false, message: 'Title is required' });
   }
 
   try {
-    const newPost = new Post({
-      title,
+    const newPost: IPost = new Post({
       description,
-      url: url.startsWith('https://') ? url : `https://${url}`,
-      status: status || 'to learn',
+      image: [image],
       user: req.userId,
     });
 

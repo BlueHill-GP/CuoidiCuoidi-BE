@@ -1,4 +1,5 @@
 "use strict";
+// import mongoose, { Schema, Document, Model } from 'mongoose';
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     var desc = Object.getOwnPropertyDescriptor(m, k);
@@ -25,19 +26,17 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 const PostSchema = new mongoose_1.default.Schema({
-    title: {
+    description: {
         type: String,
         required: true,
     },
-    description: {
-        type: String,
+    image: {
+        type: (Array),
+        required: true,
     },
-    url: {
-        type: String,
-    },
-    status: {
-        type: String,
-        enum: ['to learn', 'learning', 'learned'],
+    like: {
+        type: (Array),
+        default: [],
     },
     user: {
         type: mongoose_1.Schema.Types.ObjectId,
