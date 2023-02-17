@@ -6,7 +6,6 @@ import {
   createPost,
   updatePost,
   deletePost,
-  upUp,
   upUps,
 } from '../controllers/postController';
 
@@ -38,7 +37,6 @@ router.delete('/:id', verifyToken, deletePost);
 //@router POST api/posts
 //desc Creates a post
 //access private
-router.post('/upload', upUp);
 
 router.post('/uploads', upUps);
 

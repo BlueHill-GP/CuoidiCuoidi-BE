@@ -2,7 +2,7 @@ import { Router, Request, Response } from 'express';
 import mongoose, { ObjectId } from 'mongoose';
 import verifyToken from '../middleware/auth';
 import Post, { IPost } from '../models/Post';
-import {  uploadImage } from '../utils/uploadImage';
+import { uploadImage } from '../utils/uploadImage';
 
 interface AuthenticatedRequest extends Request {
   userId: string;
@@ -125,23 +125,6 @@ const createPost = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-const upUp = async (req: Request, res: Response) => {
-  const files = Array.isArray(req.files.image)
-    ? req.files.image
-    : [req.files.image];
-  const results = await Promise.all(files.map(uploadImage));
-  const allUploaded = results.every((result) => result);
-  if (allUploaded) {
-    res.status(200).json({
-      message: 'File(s) uploaded successfully',
-      data: files.map((file) => ({
-        url: `https://s3.amazonaws.com/cuoidicuoidi-store/${file.name}`,
-      })),
-    });
-  } else {
-    res.status(500).json({ message: 'File upload failed' });
-  }
-};
 
 const upUps = async (req: Request, res: Response) => {
   const files = Array.isArray(req.files.images)
@@ -165,4 +148,4 @@ const upUps = async (req: Request, res: Response) => {
 };
 
 
-export { createPost, updatePost, deletePost, getPosts, upUp, upUps };
+export { createPost, updatePost, deletePost, getPosts, upUps };
