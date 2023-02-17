@@ -6,6 +6,8 @@ import {
   createPost,
   updatePost,
   deletePost,
+  upUp,
+  upUps,
 } from '../controllers/postController';
 
 interface AuthenticatedRequest extends Request {
@@ -32,5 +34,12 @@ router.put('/:id', verifyToken, updatePost);
 //desc delete a post
 //access private
 router.delete('/:id', verifyToken, deletePost);
+
+//@router POST api/posts
+//desc Creates a post
+//access private
+router.post('/upload', upUp);
+
+router.post('/uploads', upUps);
 
 export default router;

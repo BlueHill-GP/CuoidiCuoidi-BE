@@ -12,9 +12,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getPosts = exports.deletePost = exports.updatePost = exports.createPost = void 0;
+exports.upUps = exports.upUp = exports.getPosts = exports.deletePost = exports.updatePost = exports.createPost = void 0;
 const express_1 = require("express");
 const Post_1 = __importDefault(require("../models/Post"));
+const uploadImage_1 = require("../utils/uploadImage");
 const router = (0, express_1.Router)();
 const getPosts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -61,7 +62,7 @@ const deletePost = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 });
 exports.deletePost = deletePost;
 const updatePost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { description, image, } = req.body;
+    const { description, image } = req.body;
     if (!description || !image) {
         return res
             .status(400)
@@ -127,4 +128,43 @@ const createPost = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 exports.createPost = createPost;
+const upUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const files = Array.isArray(req.files.image)
+        ? req.files.image
+        : [req.files.image];
+    const results = yield Promise.all(files.map(uploadImage_1.uploadImage));
+    const allUploaded = results.every((result) => result);
+    if (allUploaded) {
+        res.status(200).json({
+            message: 'File(s) uploaded successfully',
+            data: files.map((file) => ({
+                url: `https://s3.amazonaws.com/cuoidicuoidi-store/${file.name}`,
+            })),
+        });
+    }
+    else {
+        res.status(500).json({ message: 'File upload failed' });
+    }
+});
+exports.upUp = upUp;
+const upUps = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const files = Array.isArray(req.files.images)
+        ? req.files.images
+        : [req.files.images];
+    console.log(files);
+    const results = yield Promise.all(files.map(uploadImage_1.uploadImage));
+    const allUploaded = results.every((result) => result);
+    if (allUploaded) {
+        res.status(200).json({
+            message: 'File(s) uploaded successfully',
+            data: files.map((file) => ({
+                url: `https://s3.amazonaws.com/cuoidicuoidi-store/${file.name}`,
+            })),
+        });
+    }
+    else {
+        res.status(500).json({ message: 'File upload failed' });
+    }
+});
+exports.upUps = upUps;
 //# sourceMappingURL=postController.js.map

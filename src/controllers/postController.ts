@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import mongoose, { ObjectId } from 'mongoose';
 import verifyToken from '../middleware/auth';
 import Post, { IPost } from '../models/Post';
+import {  uploadImage } from '../utils/uploadImage';
 
 interface AuthenticatedRequest extends Request {
   userId: string;
@@ -53,8 +54,8 @@ const deletePost = async (req: AuthenticatedRequest, res: Response) => {
 };
 
 const updatePost = async (req: AuthenticatedRequest, res: Response) => {
-  const { description, image,  }:IPost = req.body;
-  if (!description ||!image) {
+  const { description, image }: IPost = req.body;
+  if (!description || !image) {
     return res
       .status(400)
       .json({ success: false, message: 'description is required' });
@@ -93,7 +94,7 @@ const updatePost = async (req: AuthenticatedRequest, res: Response) => {
 };
 
 const createPost = async (req: AuthenticatedRequest, res: Response) => {
-  const {description, image } = req.body;
+  const { description, image } = req.body;
 
   // validation
   if (!description || !image) {
@@ -124,4 +125,44 @@ const createPost = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-export { createPost, updatePost, deletePost, getPosts };
+const upUp = async (req: Request, res: Response) => {
+  const files = Array.isArray(req.files.image)
+    ? req.files.image
+    : [req.files.image];
+  const results = await Promise.all(files.map(uploadImage));
+  const allUploaded = results.every((result) => result);
+  if (allUploaded) {
+    res.status(200).json({
+      message: 'File(s) uploaded successfully',
+      data: files.map((file) => ({
+        url: `https://s3.amazonaws.com/cuoidicuoidi-store/${file.name}`,
+      })),
+    });
+  } else {
+    res.status(500).json({ message: 'File upload failed' });
+  }
+};
+
+const upUps = async (req: Request, res: Response) => {
+  const files = Array.isArray(req.files.images)
+    ? req.files.images
+    : [req.files.images];
+  
+  console.log(files);
+  
+  const results = await Promise.all(files.map(uploadImage));
+  const allUploaded = results.every((result) => result);
+  if (allUploaded) {
+    res.status(200).json({
+      message: 'File(s) uploaded successfully',
+      data: files.map((file) => ({
+        url: `https://s3.amazonaws.com/cuoidicuoidi-store/${file.name}`,
+      })),
+    });
+  } else {
+    res.status(500).json({ message: 'File upload failed' });
+  }
+};
+
+
+export { createPost, updatePost, deletePost, getPosts, upUp, upUps };

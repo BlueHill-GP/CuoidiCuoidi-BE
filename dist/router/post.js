@@ -23,5 +23,10 @@ router.put('/:id', auth_1.default, postController_1.updatePost);
 //desc delete a post
 //access private
 router.delete('/:id', auth_1.default, postController_1.deletePost);
+//@router POST api/posts
+//desc Creates a post
+//access private
+router.post('/upload', postController_1.upUp);
+router.post('/uploads', postController_1.upUps);
 exports.default = router;
 //# sourceMappingURL=post.js.map
