@@ -45,25 +45,6 @@ aws_sdk_1.default.config.update({
     region: process.env.REGION_s3,
 });
 const s3 = new aws_sdk_1.default.S3({ region: process.env.REGION_s3 });
-// async function uploadImage(file: UploadedFile): Promise<boolean> {
-//   const fileContents = Buffer.from(file.data as ArrayBuffer);
-//   const params: AWS.S3.PutObjectRequest = {
-//     Bucket: process.env.BUCKET_s3,
-//     Key: file.name,
-//     Body: fileContents,
-//   };
-//   return new Promise<boolean>((resolve, reject) => {
-//     s3.upload(params, (err, data) => {
-//       if (err) {
-//         console.log(err);
-//         reject(false);
-//       } else {
-//         console.log('File uploaded successfully:', data);
-//         resolve(true);
-//       }
-//     });
-//   });
-// }
 function uploadImage(file) {
     return __awaiter(this, void 0, void 0, function* () {
         const fileContents = Buffer.from(file.data);
