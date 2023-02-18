@@ -35,34 +35,83 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.uploadImage = void 0;
+exports.deleteImage = exports.uploadImage = void 0;
 const aws_sdk_1 = __importDefault(require("aws-sdk"));
+const client_s3_1 = require("@aws-sdk/client-s3");
+// import { s3Client } from "./libs/s3Client.js" // Helper function that creates Amazon S3 service client module.
+const client_s3_2 = require("@aws-sdk/client-s3");
 const dotenv = __importStar(require("dotenv"));
 dotenv.config();
 aws_sdk_1.default.config.update({
+    // try to use the latest version but not work :((
     accessKeyId: process.env.ACCESS_KEY_ID_S3,
     secretAccessKey: process.env.SECRET_ACCESS_KEY_S3,
     region: process.env.REGION_s3,
 });
+const s3Client = new client_s3_2.S3Client({
+    region: process.env.REGION_s3,
+    credentials: {
+        accessKeyId: process.env.ACCESS_KEY_ID_S3,
+        secretAccessKey: process.env.SECRET_ACCESS_KEY_S3,
+    },
+});
 const s3 = new aws_sdk_1.default.S3({ region: process.env.REGION_s3 });
-function uploadImage(key, file) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const fileContents = Buffer.from(file.data);
-        const params = {
-            Bucket: process.env.BUCKET_s3,
-            Key: key + file.name,
-            Body: fileContents,
-            ContentType: file.mimetype,
-            ACL: 'public-read',
-        };
-        const result = yield s3.upload(params).promise();
-        if (result.Location) {
-            return result.Location;
-        }
-        else {
-            return false;
-        }
-    });
-}
+const uploadImage = (userId, file) => __awaiter(void 0, void 0, void 0, function* () {
+    const fileContents = Buffer.from(file.data);
+    const key = userId + file.name;
+    const params = {
+        Bucket: process.env.BUCKET_s3,
+        Key: key,
+        Body: fileContents,
+        ContentType: file.mimetype,
+        ACL: 'public-read',
+    };
+    const result = yield s3.upload(params).promise();
+    if (result.Location) {
+        return process.env.LINK_BUCKET_S3 + key;
+    }
+    else {
+        return false;
+    }
+});
 exports.uploadImage = uploadImage;
-//# sourceMappingURL=uploadImage.js.map
+// const uploadImage = async (file: UploadedFile, key: string) => {
+//   const fileContents = Buffer.from(file.data as ArrayBuffer);
+//   const fileStream = fs.createReadStream(file);
+//   console.log("filename:      ",fileContents);
+//   console.log('filename:      ', file.name);
+//   try {
+//     const data = await s3Client.send(
+//       new PutObjectCommand({
+//         Bucket: 'cuoidicuoidi-store',
+//         Key: key,
+//         Body: file.name,
+//         ContentType: file.mimetype,
+//         ACL: 'public-read',
+//       })
+//     );
+//     console.log(data);
+//     return process.env.LINK_S3 + key;
+//   } catch (err) {
+//     console.log('Error', err);
+//     throw err;
+//   }
+// };
+const deleteImage = (urlImage) => __awaiter(void 0, void 0, void 0, function* () {
+    const key = urlImage.replace(process.env.LINK_S3, '');
+    console.log(key);
+    const bucketParams = {
+        Bucket: 'cuoidicuoidi-store',
+        Key: key,
+    };
+    try {
+        const data = yield s3Client.send(new client_s3_1.DeleteObjectCommand(bucketParams));
+        return data;
+    }
+    catch (err) {
+        console.log('Error', err);
+        return false;
+    }
+});
+exports.deleteImage = deleteImage;
+//# sourceMappingURL=handleImage.js.map

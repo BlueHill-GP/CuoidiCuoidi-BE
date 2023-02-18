@@ -3,6 +3,12 @@ import { Request, Response, NextFunction } from 'express';
 
 interface AuthenticatedRequest extends Request {
   userId?: string;
+  // payload?: string
+}
+
+interface IDecode {
+  userId: string;
+
 }
 
 const verifyToken = (
@@ -20,11 +26,24 @@ const verifyToken = (
   }
 
   try {
+    // const decoded = jwt.verify(
+    //   token,
+    //   process.env.ACCESS_TOKEN_SECRET as string
+    // ) as { payload: string };
     const decoded = jwt.verify(
       token,
       process.env.ACCESS_TOKEN_SECRET as string
-    ) as { userId: string };
+    ) as {userId: string}; 
     req.userId = decoded.userId;
+    console.log("id user middleware: ",req.userId);
+  //   const { userId } = decoded;
+  // console.log(userId);
+  
+    
+    // console.log('decode: ', decoded);
+    
+    // console.log('decode: ', req.payload);
+    
     next();
   } catch (error) {
     console.log(error);

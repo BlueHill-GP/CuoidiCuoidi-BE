@@ -4,12 +4,16 @@ import RefreshToken from '../models/RefreshToken';
 dotenv.config();
 
 const generateToken = (payload: string) => {
-  const accessToken = Jwt.sign({ payload }, process.env.ACCESS_TOKEN_SECRET, {
-    expiresIn: '12m',
-  });
-  const refreshToken = Jwt.sign({ payload }, process.env.REFRESH_TOKEN_SECRET, {
+  const accessToken = Jwt.sign({ userId: payload }, process.env.ACCESS_TOKEN_SECRET, {
     expiresIn: '2h',
   });
+  const refreshToken = Jwt.sign(
+    { userId: payload },
+    process.env.REFRESH_TOKEN_SECRET,
+    {
+      expiresIn: '2h',
+    }
+  );
   return { accessToken, refreshToken };
 };
 

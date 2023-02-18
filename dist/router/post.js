@@ -6,6 +6,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const auth_1 = __importDefault(require("../middleware/auth"));
 const postController_1 = require("../controllers/postController");
+const validation_1 = require("../middleware/validation");
+const handleImage_1 = require("../utils/handleImage");
 const router = (0, express_1.Router)();
 //@router GET api/posts
 //desc get posts
@@ -14,7 +16,7 @@ router.get('/', auth_1.default, postController_1.getPosts);
 //@router POST api/posts
 //desc Creates a post
 //access private
-router.post('/', auth_1.default, postController_1.createPost);
+router.post('/', auth_1.default, validation_1.checkImage, postController_1.createPost);
 //@router PUT api/posts
 //desc update a post
 //access private
@@ -23,9 +25,9 @@ router.put('/:id', auth_1.default, postController_1.updatePost);
 //desc delete a post
 //access private
 router.delete('/:id', auth_1.default, postController_1.deletePost);
-//@router POST api/posts
-//desc Creates a post
-//access private
-router.post('/uploads', postController_1.upUps);
+router.get('/delete', handleImage_1.deleteImage);
+// router.get('/dedehehehe', run);
+// router.post('/uploads', checkImage, upUps);
+// router.post('/uploads', verifyToken, checkImage, createPostTest);
 exports.default = router;
 //# sourceMappingURL=post.js.map

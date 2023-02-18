@@ -41,10 +41,10 @@ const dotenv = __importStar(require("dotenv"));
 const RefreshToken_1 = __importDefault(require("../models/RefreshToken"));
 dotenv.config();
 const generateToken = (payload) => {
-    const accessToken = jsonwebtoken_1.default.sign({ payload }, process.env.ACCESS_TOKEN_SECRET, {
-        expiresIn: '12m',
+    const accessToken = jsonwebtoken_1.default.sign({ userId: payload }, process.env.ACCESS_TOKEN_SECRET, {
+        expiresIn: '2h',
     });
-    const refreshToken = jsonwebtoken_1.default.sign({ payload }, process.env.REFRESH_TOKEN_SECRET, {
+    const refreshToken = jsonwebtoken_1.default.sign({ userId: payload }, process.env.REFRESH_TOKEN_SECRET, {
         expiresIn: '2h',
     });
     return { accessToken, refreshToken };

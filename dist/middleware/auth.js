@@ -13,8 +13,17 @@ const verifyToken = (req, res, next) => {
             .json({ success: false, message: 'Access token not found' });
     }
     try {
+        // const decoded = jwt.verify(
+        //   token,
+        //   process.env.ACCESS_TOKEN_SECRET as string
+        // ) as { payload: string };
         const decoded = jsonwebtoken_1.default.verify(token, process.env.ACCESS_TOKEN_SECRET);
         req.userId = decoded.userId;
+        console.log("id user middleware: ", req.userId);
+        //   const { userId } = decoded;
+        // console.log(userId);
+        // console.log('decode: ', decoded);
+        // console.log('decode: ', req.payload);
         next();
     }
     catch (error) {

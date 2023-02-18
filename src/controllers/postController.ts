@@ -1,12 +1,12 @@
 import { Router, Request, Response } from 'express';
 import mongoose, { ObjectId } from 'mongoose';
+import { AuthenticatedRequest } from '../interfaces/request';
 import verifyToken from '../middleware/auth';
 import Post, { IPost } from '../models/Post';
-import { uploadImage } from '../utils/uploadImage';
+import { createResponse } from '../utils/response';
+import { deleteImage, uploadImage } from '../utils/handleImage';
 
-interface AuthenticatedRequest extends Request {
-  userId: string;
-}
+
 const router: Router = Router();
 
 const getPosts = async (req: AuthenticatedRequest, res: Response) => {
@@ -30,6 +30,10 @@ const getPosts = async (req: AuthenticatedRequest, res: Response) => {
 const deletePost = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const postUpdateCondition = { _id: req.params.id, user: req.userId };
+    const post = await Post.findById({ _id: req.params.id });
+    console.log(post);
+    
+    await Promise.all(post.image.map((file) => deleteImage(file)));
     const deletedPost = await Post.findOneAndDelete(postUpdateCondition);
 
     if (!deletedPost) {
@@ -93,59 +97,40 @@ const updatePost = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-const createPost = async (req: AuthenticatedRequest, res: Response) => {
-  const { description, image } = req.body;
 
-  // validation
-  if (!description || !image) {
-    return res
-      .status(400)
-      .json({ success: false, message: 'Title is required' });
-  }
+const createPost = async (req: AuthenticatedRequest, res: Response) => {
+  const { description } = req.body;
+
+  const files = Array.isArray(req.files.images)
+    ? req.files.images
+    : [req.files.images];
 
   try {
+    // const results = await Promise.all(files.map(uploadImage));
+    const results = await Promise.all(
+      files.map((file) => uploadImage(req.userId, file))
+    );
+    if (!results) {
+      return createResponse(res, 500, false, 'Internal Server Error');
+    }
+    console.log('log id: ', req.userId);
+
     const newPost: IPost = new Post({
       description,
-      image: [image],
+      image: results,
       user: req.userId,
     });
-
     await newPost.save();
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: 'Post created successfully',
       post: newPost,
     });
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json({
-      success: false,
-      message: 'Internal server error',
-    });
+  } catch (error) {
+    console.log(error);
+    return createResponse(res, 500, false, 'Internal Server Error');
   }
 };
 
 
-const upUps = async (req: Request, res: Response) => {
-  const files = Array.isArray(req.files.images)
-    ? req.files.images
-    : [req.files.images];
-  
-  console.log(files);
-  
-  const results = await Promise.all(files.map(uploadImage));
-  const allUploaded = results.every((result) => result);
-  if (allUploaded) {
-    res.status(200).json({
-      message: 'File(s) uploaded successfully',
-      data: files.map((file) => ({
-        url: `https://s3.amazonaws.com/cuoidicuoidi-store/${file.name}`,
-      })),
-    });
-  } else {
-    res.status(500).json({ message: 'File upload failed' });
-  }
-};
-
-
-export { createPost, updatePost, deletePost, getPosts, upUps };
+export { createPost, updatePost, deletePost, getPosts };
