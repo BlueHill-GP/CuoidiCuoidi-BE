@@ -12,6 +12,7 @@ const logger_1 = require("./logger");
 const db_1 = __importDefault(require("./config/db"));
 const auth_1 = __importDefault(require("./router/auth"));
 const post_1 = __importDefault(require("./router/post"));
+const servicePackage_1 = __importDefault(require("./router/servicePackage"));
 mongoose_1.default.set('strictQuery', false);
 (0, db_1.default)();
 const app = (0, express_1.default)();
@@ -26,6 +27,7 @@ app.get('/', (req, res) => {
 });
 app.use('/api/auth', auth_1.default);
 app.use('/api/posts', post_1.default);
+app.use('/api/service-packages', servicePackage_1.default);
 app.listen(PORT, () => {
     console.log('love u');
     return console.log(`Express is listening at http://localhost:${PORT}`);

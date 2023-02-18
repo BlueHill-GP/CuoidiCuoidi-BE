@@ -2,13 +2,13 @@ import express from 'express';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import fileUpload from 'express-fileupload';
-import AWS from 'aws-sdk';
 import cors from 'cors';
 import logger, { expressLogger } from './logger';
 import connectDB from './config/db';
 
 import authRouter from './router/auth';
 import postRouter from './router/post';
+import servicePackagesRouter from './router/servicePackage';
 
 mongoose.set('strictQuery', false);
 connectDB();
@@ -29,6 +29,7 @@ app.get('/', (req, res) => {
 });
 app.use('/api/auth', authRouter);
 app.use('/api/posts', postRouter);
+app.use('/api/service-packages', servicePackagesRouter);
 
 app.listen(PORT, () => {
   console.log('love u');

@@ -12,59 +12,43 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getPosts = exports.deletePost = exports.updatePost = exports.createPost = void 0;
-const Post_1 = __importDefault(require("../models/Post"));
+exports.getServicePackages = exports.deleteServicePackage = exports.updateServicePackage = exports.createServicePackage = void 0;
 const response_1 = require("../utils/response");
 const handleImage_1 = require("../utils/handleImage");
-// const router: Router = Router();
-const getPosts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const servicePackage_1 = __importDefault(require("../models/servicePackage"));
+const getServicePackages = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const posts = yield Post_1.default.find({ user: req.userId }).populate('user', [
-            'username',
-        ]);
-        res.status(200).json({
-            success: true,
-            posts,
-        });
+        const servicePackages = yield servicePackage_1.default.find({
+            user: req.userId,
+        }).populate('user', ['username']);
+        (0, response_1.createResponse)(res, 200, true, 'Get service packages successfully', servicePackages);
     }
     catch (error) {
         console.log(error);
-        return res.status(500).json({
-            success: false,
-            message: 'Internal server error',
-        });
+        return (0, response_1.createResponse)(res, 500, false, 'Internal Server Error');
     }
 });
-exports.getPosts = getPosts;
-const deletePost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.getServicePackages = getServicePackages;
+const deleteServicePackage = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const postUpdateCondition = { _id: req.params.id, user: req.userId };
-        const post = yield Post_1.default.findById({ _id: req.params.id });
-        console.log(post);
-        yield Promise.all(post.image.map((file) => (0, handleImage_1.deleteImage)(file)));
-        const deletedPost = yield Post_1.default.findOneAndDelete(postUpdateCondition);
-        if (!deletedPost) {
-            return res.status(401).json({
-                success: false,
-                message: 'User is not authorized or post is not found',
-            });
-        }
-        res.status(200).json({
-            success: true,
-            message: 'Post successfully deleted',
-            post: deletedPost,
+        const servicePackage = yield servicePackage_1.default.findById({
+            _id: req.params.id,
         });
+        yield Promise.all(servicePackage.image.map((file) => (0, handleImage_1.deleteImage)(file)));
+        const deletedPost = yield servicePackage_1.default.findOneAndDelete(postUpdateCondition);
+        if (!deletedPost) {
+            return (0, response_1.createResponse)(res, 500, false, 'User is not authorized or package service is not found');
+        }
+        (0, response_1.createResponse)(res, 200, true, 'Service package successfully deleted');
     }
     catch (error) {
         console.log(error);
-        return res.status(500).json({
-            success: false,
-            message: 'Internal server error',
-        });
+        return (0, response_1.createResponse)(res, 500, false, 'Internal Server Error');
     }
 });
-exports.deletePost = deletePost;
-const updatePost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.deleteServicePackage = deleteServicePackage;
+const updateServicePackage = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { description, image } = req.body;
     if (!description || !image) {
         return res
@@ -77,52 +61,43 @@ const updatePost = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             image: image,
         };
         const postUpdateCondition = { _id: req.params.id, user: req.userId };
-        updatePost = yield Post_1.default.findOneAndUpdate(postUpdateCondition, updatePost, {
+        updatePost = yield servicePackage_1.default.findOneAndUpdate(postUpdateCondition, updatePost, {
             new: true,
         });
         if (!updatePost) {
-            return res.status(401).json({
-                success: false,
-                message: 'User is not authorized or post is not found',
-            });
+            return (0, response_1.createResponse)(res, 401, false, 'User is not authorized or package service is not found');
         }
-        res.status(200).json({
-            success: true,
-            message: 'Post successfully updated',
-            post: updatePost,
-        });
+        (0, response_1.createResponse)(res, 200, true, 'Service package successfully updated', updatePost);
     }
     catch (error) {
         console.log(error);
-        return res.status(500).json({
-            success: false,
-            message: 'Internal server error',
-        });
+        return (0, response_1.createResponse)(res, 500, false, 'Internal Server Error');
     }
 });
-exports.updatePost = updatePost;
-const createPost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { description } = req.body;
+exports.updateServicePackage = updateServicePackage;
+const createServicePackage = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { title, description, price } = req.body;
     const files = Array.isArray(req.files.images)
         ? req.files.images
         : [req.files.images];
     try {
-        // const results = await Promise.all(files.map(uploadImage));
         const results = yield Promise.all(files.map((file) => (0, handleImage_1.uploadImage)(req.userId, file)));
         if (!results) {
             return (0, response_1.createResponse)(res, 500, false, 'Internal Server Error');
         }
         console.log('log id: ', req.userId);
-        const newPost = new Post_1.default({
-            description,
+        const newServicePackage = new servicePackage_1.default({
+            title: title,
+            description: description,
+            price: price,
             image: results,
             user: req.userId,
         });
-        yield newPost.save();
+        yield newServicePackage.save();
         return res.status(200).json({
             success: true,
             message: 'Post created successfully',
-            post: newPost,
+            post: newServicePackage,
         });
     }
     catch (error) {
@@ -130,5 +105,5 @@ const createPost = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         return (0, response_1.createResponse)(res, 500, false, 'Internal Server Error');
     }
 });
-exports.createPost = createPost;
-//# sourceMappingURL=postController.js.map
+exports.createServicePackage = createServicePackage;
+//# sourceMappingURL=servicePackageController.js.map

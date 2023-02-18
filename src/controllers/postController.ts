@@ -1,13 +1,11 @@
 import { Router, Request, Response } from 'express';
-import mongoose, { ObjectId } from 'mongoose';
 import { AuthenticatedRequest } from '../interfaces/request';
-import verifyToken from '../middleware/auth';
 import Post, { IPost } from '../models/Post';
-import { createResponse } from '../utils/response';
+import { createResponse as response } from '../utils/response';
 import { deleteImage, uploadImage } from '../utils/handleImage';
 
 
-const router: Router = Router();
+// const router: Router = Router();
 
 const getPosts = async (req: AuthenticatedRequest, res: Response) => {
   try {
@@ -111,7 +109,7 @@ const createPost = async (req: AuthenticatedRequest, res: Response) => {
       files.map((file) => uploadImage(req.userId, file))
     );
     if (!results) {
-      return createResponse(res, 500, false, 'Internal Server Error');
+      return response(res, 500, false, 'Internal Server Error');
     }
     console.log('log id: ', req.userId);
 
@@ -128,7 +126,7 @@ const createPost = async (req: AuthenticatedRequest, res: Response) => {
     });
   } catch (error) {
     console.log(error);
-    return createResponse(res, 500, false, 'Internal Server Error');
+    return response(res, 500, false, 'Internal Server Error');
   }
 };
 
