@@ -35,39 +35,34 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateRefreshToken = exports.generateToken = void 0;
-const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+exports.uploadImage = void 0;
+const aws_sdk_1 = __importDefault(require("aws-sdk"));
 const dotenv = __importStar(require("dotenv"));
-const RefreshToken_1 = __importDefault(require("../models/RefreshToken"));
 dotenv.config();
-const generateToken = (payload) => {
-    const accessToken = jsonwebtoken_1.default.sign({ userId: payload }, process.env.ACCESS_TOKEN_SECRET, {
-        expiresIn: '2h',
-    });
-    const refreshToken = jsonwebtoken_1.default.sign({ userId: payload }, process.env.REFRESH_TOKEN_SECRET, {
-        expiresIn: '2h',
-    });
-    return { accessToken, refreshToken };
-};
-exports.generateToken = generateToken;
-const updateRefreshToken = (userId, refreshToken) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const user = yield RefreshToken_1.default.findOne({ userId: userId });
-        if (user) {
-            yield RefreshToken_1.default.findByIdAndUpdate(user._id, {
-                refreshToken: refreshToken,
-            });
+aws_sdk_1.default.config.update({
+    accessKeyId: process.env.ACCESS_KEY_ID_S3,
+    secretAccessKey: process.env.SECRET_ACCESS_KEY_S3,
+    region: process.env.REGION_s3,
+});
+const s3 = new aws_sdk_1.default.S3({ region: process.env.REGION_s3 });
+function uploadImage(key, file) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const fileContents = Buffer.from(file.data);
+        const params = {
+            Bucket: process.env.BUCKET_s3,
+            Key: key + file.name,
+            Body: fileContents,
+            ContentType: file.mimetype,
+            ACL: 'public-read',
+        };
+        const result = yield s3.upload(params).promise();
+        if (result.Location) {
+            return result.Location;
         }
         else {
-            yield RefreshToken_1.default.create({
-                userId: userId,
-                refreshToken: refreshToken,
-            });
+            return false;
         }
-    }
-    catch (error) {
-        console.log(error);
-    }
-});
-exports.updateRefreshToken = updateRefreshToken;
-//# sourceMappingURL=token.js.map
+    });
+}
+exports.uploadImage = uploadImage;
+//# sourceMappingURL=uploadImage.js.map

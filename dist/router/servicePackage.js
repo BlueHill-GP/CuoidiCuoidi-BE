@@ -4,30 +4,25 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
+const servicePackageController_1 = require("../controllers/servicePackageController");
 const auth_1 = __importDefault(require("../middleware/auth"));
-const postController_1 = require("../controllers/postController");
 const validation_1 = require("../middleware/validation");
-const handleImage_1 = require("../utils/handleImage");
 const router = (0, express_1.Router)();
 //@router GET api/posts
 //desc get posts
 //access private
-router.get('/', auth_1.default, postController_1.getPosts);
+router.get('/', auth_1.default, servicePackageController_1.getServicePackages);
 //@router POST api/posts
 //desc Creates a post
 //access private
-router.post('/', auth_1.default, validation_1.checkImage, postController_1.createPost);
+router.post('/', auth_1.default, validation_1.checkImage, servicePackageController_1.createServicePackage);
 //@router PUT api/posts
 //desc update a post
 //access private
-router.put('/:id', auth_1.default, postController_1.updatePost);
+router.put('/:id', auth_1.default, servicePackageController_1.updateServicePackage);
 //@router DELETE api/posts
 //desc delete a post
 //access private
-router.delete('/:id', auth_1.default, postController_1.deletePost);
-router.get('/delete', handleImage_1.deleteImage);
-// router.get('/dedehehehe', run);
-// router.post('/uploads', checkImage, upUps);
-// router.post('/uploads', verifyToken, checkImage, createPostTest);
+router.delete('/:id', auth_1.default, servicePackageController_1.deleteServicePackage);
 exports.default = router;
-//# sourceMappingURL=post.js.map
+//# sourceMappingURL=servicePackage.js.map

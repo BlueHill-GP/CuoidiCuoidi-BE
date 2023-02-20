@@ -1,5 +1,4 @@
 "use strict";
-// import mongoose, { Schema, Document, Model } from 'mongoose';
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     var desc = Object.getOwnPropertyDescriptor(m, k);
@@ -25,7 +24,11 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
-const PostSchema = new mongoose_1.default.Schema({
+const ServicePackageSchema = new mongoose_1.default.Schema({
+    title: {
+        type: String,
+        required: true,
+    },
     description: {
         type: String,
         required: true,
@@ -34,19 +37,24 @@ const PostSchema = new mongoose_1.default.Schema({
         type: (Array),
         required: true,
     },
-    like: {
+    star: {
         type: (Array),
         default: [],
     },
     user: {
         type: mongoose_1.Schema.Types.ObjectId,
         ref: 'users',
+        required: true,
+    },
+    price: {
+        type: Number,
+        required: true,
     },
     createAt: {
         type: Date,
         default: Date.now,
     },
 });
-const Post = mongoose_1.default.model('posts', PostSchema);
-exports.default = Post;
-//# sourceMappingURL=Post.js.map
+const ServicePackage = mongoose_1.default.model('servicePackages', ServicePackageSchema);
+exports.default = ServicePackage;
+//# sourceMappingURL=servicePackage.js.map

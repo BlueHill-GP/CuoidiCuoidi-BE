@@ -13,9 +13,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getPosts = exports.deletePost = exports.updatePost = exports.createPost = void 0;
-const express_1 = require("express");
 const Post_1 = __importDefault(require("../models/Post"));
-const router = (0, express_1.Router)();
+const response_1 = require("../utils/response");
+const handleImage_1 = require("../utils/handleImage");
+// const router: Router = Router();
 const getPosts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const posts = yield Post_1.default.find({ user: req.userId }).populate('user', [
@@ -38,6 +39,9 @@ exports.getPosts = getPosts;
 const deletePost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const postUpdateCondition = { _id: req.params.id, user: req.userId };
+        const post = yield Post_1.default.findById({ _id: req.params.id });
+        console.log(post);
+        yield Promise.all(post.image.map((file) => (0, handleImage_1.deleteImage)(file)));
         const deletedPost = yield Post_1.default.findOneAndDelete(postUpdateCondition);
         if (!deletedPost) {
             return res.status(401).json({
@@ -61,18 +65,16 @@ const deletePost = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 });
 exports.deletePost = deletePost;
 const updatePost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { title, description, url, status } = req.body;
-    if (!title) {
+    const { description, image } = req.body;
+    if (!description || !image) {
         return res
             .status(400)
-            .json({ success: false, message: 'Title is required' });
+            .json({ success: false, message: 'description is required' });
     }
     try {
         let updatePost = {
-            title,
-            description: description || '',
-            url: (url.startsWith('https://') ? url : `https://${url}`) || '',
-            status: status || 'to learn',
+            description: description,
+            image: image,
         };
         const postUpdateCondition = { _id: req.params.id, user: req.userId };
         updatePost = yield Post_1.default.findOneAndUpdate(postUpdateCondition, updatePost, {
@@ -100,34 +102,32 @@ const updatePost = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 });
 exports.updatePost = updatePost;
 const createPost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { title, description, url, status } = req.body;
-    // validation
-    if (!title) {
-        return res
-            .status(400)
-            .json({ success: false, message: 'Title is required' });
-    }
+    const { description } = req.body;
+    const files = Array.isArray(req.files.images)
+        ? req.files.images
+        : [req.files.images];
     try {
+        // const results = await Promise.all(files.map(uploadImage));
+        const results = yield Promise.all(files.map((file) => (0, handleImage_1.uploadImage)(req.userId, file)));
+        if (!results) {
+            return (0, response_1.createResponse)(res, 500, false, 'Internal Server Error');
+        }
+        console.log('log id: ', req.userId);
         const newPost = new Post_1.default({
-            title,
             description,
-            url: url.startsWith('https://') ? url : `https://${url}`,
-            status: status || 'to learn',
+            image: results,
             user: req.userId,
         });
         yield newPost.save();
-        res.status(200).json({
+        return res.status(200).json({
             success: true,
             message: 'Post created successfully',
             post: newPost,
         });
     }
-    catch (err) {
-        console.log(err);
-        return res.status(500).json({
-            success: false,
-            message: 'Internal server error',
-        });
+    catch (error) {
+        console.log(error);
+        return (0, response_1.createResponse)(res, 500, false, 'Internal Server Error');
     }
 });
 exports.createPost = createPost;

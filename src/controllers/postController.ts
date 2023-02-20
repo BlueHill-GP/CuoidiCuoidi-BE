@@ -1,11 +1,11 @@
 import { Router, Request, Response } from 'express';
-import verifyToken from '../middleware/auth';
-import Post from '../models/Post';
+import { AuthenticatedRequest } from '../interfaces/request';
+import Post, { IPost } from '../models/Post';
+import { createResponse as response } from '../utils/response';
+import { deleteImage, uploadImage } from '../utils/handleImage';
 
-interface AuthenticatedRequest extends Request {
-  userId: string;
-}
-const router: Router = Router();
+
+// const router: Router = Router();
 
 const getPosts = async (req: AuthenticatedRequest, res: Response) => {
   try {
@@ -28,6 +28,10 @@ const getPosts = async (req: AuthenticatedRequest, res: Response) => {
 const deletePost = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const postUpdateCondition = { _id: req.params.id, user: req.userId };
+    const post = await Post.findById({ _id: req.params.id });
+    console.log(post);
+    
+    await Promise.all(post.image.map((file) => deleteImage(file)));
     const deletedPost = await Post.findOneAndDelete(postUpdateCondition);
 
     if (!deletedPost) {
@@ -52,19 +56,17 @@ const deletePost = async (req: AuthenticatedRequest, res: Response) => {
 };
 
 const updatePost = async (req: AuthenticatedRequest, res: Response) => {
-  const { title, description, url, status } = req.body;
-  if (!title) {
+  const { description, image }: IPost = req.body;
+  if (!description || !image) {
     return res
       .status(400)
-      .json({ success: false, message: 'Title is required' });
+      .json({ success: false, message: 'description is required' });
   }
 
   try {
     let updatePost: any = {
-      title,
-      description: description || '',
-      url: (url.startsWith('https://') ? url : `https://${url}`) || '',
-      status: status || 'to learn',
+      description: description,
+      image: image,
     };
 
     const postUpdateCondition = { _id: req.params.id, user: req.userId };
@@ -93,38 +95,40 @@ const updatePost = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-const createPost = async (req: AuthenticatedRequest, res: Response) => {
-  const { title, description, url, status } = req.body;
 
-  // validation
-  if (!title) {
-    return res
-      .status(400)
-      .json({ success: false, message: 'Title is required' });
-  }
+const createPost = async (req: AuthenticatedRequest, res: Response) => {
+  const { description } = req.body;
+
+  const files = Array.isArray(req.files.images)
+    ? req.files.images
+    : [req.files.images];
 
   try {
-    const newPost = new Post({
-      title,
+    // const results = await Promise.all(files.map(uploadImage));
+    const results = await Promise.all(
+      files.map((file) => uploadImage(req.userId, file))
+    );
+    if (!results) {
+      return response(res, 500, false, 'Internal Server Error');
+    }
+    console.log('log id: ', req.userId);
+
+    const newPost: IPost = new Post({
       description,
-      url: url.startsWith('https://') ? url : `https://${url}`,
-      status: status || 'to learn',
+      image: results,
       user: req.userId,
     });
-
     await newPost.save();
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: 'Post created successfully',
       post: newPost,
     });
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json({
-      success: false,
-      message: 'Internal server error',
-    });
+  } catch (error) {
+    console.log(error);
+    return response(res, 500, false, 'Internal Server Error');
   }
 };
+
 
 export { createPost, updatePost, deletePost, getPosts };
