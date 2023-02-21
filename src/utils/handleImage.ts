@@ -1,14 +1,13 @@
 import AWS from 'aws-sdk';
 import { UploadedFile } from 'express-fileupload';
 import { DeleteObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
-// import { s3Client } from "./libs/s3Client.js" // Helper function that creates Amazon S3 service client module.
 import { S3Client } from '@aws-sdk/client-s3';
 
 import * as dotenv from 'dotenv';
 dotenv.config();
 
 AWS.config.update({
-  // try to use the latest version but not work :((
+  // try to use the lasted version but not work :((
   accessKeyId: process.env.ACCESS_KEY_ID_S3,
   secretAccessKey: process.env.SECRET_ACCESS_KEY_S3,
   region: process.env.REGION_s3,
@@ -26,7 +25,8 @@ const s3 = new AWS.S3({ region: process.env.REGION_s3 });
 
 const uploadImage = async (userId: string, file: UploadedFile) => {
   const fileContents = Buffer.from(file.data as ArrayBuffer);
-  const key = userId + file.name;
+  const key = userId + Date.now().toString();
+  
   const params: AWS.S3.PutObjectRequest = {
     Bucket: process.env.BUCKET_s3,
     Key: key,
@@ -44,30 +44,6 @@ const uploadImage = async (userId: string, file: UploadedFile) => {
   }
 };
 
-// const uploadImage = async (file: UploadedFile, key: string) => {
-//   const fileContents = Buffer.from(file.data as ArrayBuffer);
-//   const fileStream = fs.createReadStream(file);
-//   console.log("filename:      ",fileContents);
-//   console.log('filename:      ', file.name);
-
-//   try {
-//     const data = await s3Client.send(
-//       new PutObjectCommand({
-//         Bucket: 'cuoidicuoidi-store',
-//         Key: key,
-//         Body: file.name,
-//         ContentType: file.mimetype,
-//         ACL: 'public-read',
-//       })
-//     );
-//     console.log(data);
-
-//     return process.env.LINK_S3 + key;
-//   } catch (err) {
-//     console.log('Error', err);
-//     throw err;
-//   }
-// };
 
 const deleteImage = async (urlImage: string) => {
   const key = urlImage.replace(process.env.LINK_S3, '');
