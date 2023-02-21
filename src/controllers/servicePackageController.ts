@@ -105,7 +105,7 @@ const createServicePackage = async (
   res: Response
 ) => {
   const { title, description, price } = req.body;
-  const userIP = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+  const userIP = req.socket.remoteAddress;
   console.log("userIb: 34234: ",userIP);
   
   const files = Array.isArray(req.files.images)

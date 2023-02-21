@@ -77,7 +77,7 @@ const updateServicePackage = (req, res) => __awaiter(void 0, void 0, void 0, fun
 exports.updateServicePackage = updateServicePackage;
 const createServicePackage = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { title, description, price } = req.body;
-    const userIP = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+    const userIP = req.socket.remoteAddress;
     console.log("userIb: 34234: ", userIP);
     const files = Array.isArray(req.files.images)
         ? req.files.images
