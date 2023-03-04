@@ -99,7 +99,7 @@ const createServicePackage = (req, res) => __awaiter(void 0, void 0, void 0, fun
         return res.status(200).json({
             success: true,
             message: 'Post created successfully',
-            post: newServicePackage,
+            newServicePackage,
         });
     }
     catch (error) {

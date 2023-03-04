@@ -25,17 +25,57 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 const BookingSchema = new mongoose_1.default.Schema({
-    partnerId: {
-        type: String,
-        required: true,
-    },
     customerId: {
         type: String,
+    },
+    customerName: {
+        type: String,
         required: true,
     },
-    user: {
+    customerAddress: {
+        type: String,
+        required: true,
+    },
+    customerPhone: {
+        type: String,
+        required: true,
+    },
+    customerEmail: {
+        type: String,
+        required: true,
+    },
+    customerGender: {
+        type: String,
+        required: true,
+    },
+    customerAge: {
+        type: String,
+        required: true,
+    },
+    bookingTime: {
+        type: Date,
+        required: true,
+    },
+    bookingAddress: {
+        type: String,
+        required: true,
+    },
+    bookingStatus: {
+        type: String,
+        default: 'waiting',
+    },
+    serviceId: {
         type: mongoose_1.Schema.Types.ObjectId,
-        ref: 'users',
+        ref: 'servicePackages',
+        required: true,
+    },
+    paymentStatus: {
+        type: Boolean,
+        default: false,
+    },
+    notes: {
+        type: String,
+        default: '',
     },
     createAt: {
         type: Date,

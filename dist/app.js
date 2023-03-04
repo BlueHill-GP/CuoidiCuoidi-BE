@@ -13,6 +13,7 @@ const db_1 = __importDefault(require("./config/db"));
 const auth_1 = __importDefault(require("./router/auth"));
 const post_1 = __importDefault(require("./router/post"));
 const servicePackage_1 = __importDefault(require("./router/servicePackage"));
+const booking_1 = __importDefault(require("./router/booking"));
 mongoose_1.default.set('strictQuery', false);
 (0, db_1.default)();
 const app = (0, express_1.default)();
@@ -23,11 +24,12 @@ app.use(body_parser_1.default.json());
 app.use(body_parser_1.default.urlencoded({ extended: true }));
 const PORT = 4000;
 app.get('/', (req, res) => {
-    res.send('May be i love you all ❤️');
+    res.send('I love you all ❤️');
 });
 app.use('/api/auth', auth_1.default);
 app.use('/api/posts', post_1.default);
 app.use('/api/service-packages', servicePackage_1.default);
+app.use('/api/booking', booking_1.default);
 app.listen(PORT, () => {
     console.log('love u');
     return console.log(`Express is listening at http://localhost:${PORT}`);

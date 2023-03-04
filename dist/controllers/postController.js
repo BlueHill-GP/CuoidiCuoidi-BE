@@ -17,11 +17,40 @@ const Post_1 = __importDefault(require("../models/Post"));
 const response_1 = require("../utils/response");
 const handleImage_1 = require("../utils/handleImage");
 // const router: Router = Router();
+const getPostsByUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const page = req.query.page || 1; // Default to page 1 if no page parameter is provided
+        const pageSize = 1; // Number of posts per page
+        const startIndex = (page - 1) * pageSize;
+        const endIndex = startIndex + pageSize;
+        const posts = yield Post_1.default.find({ user: req.userId })
+            .populate('user', ['username'])
+            .skip(startIndex)
+            .limit(pageSize);
+        ;
+        res.status(200).json({
+            success: true,
+            posts,
+        });
+    }
+    catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            success: false,
+            message: 'Internal server error',
+        });
+    }
+});
 const getPosts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const posts = yield Post_1.default.find({ user: req.userId }).populate('user', [
-            'username',
-        ]);
+        const page = req.query.page || 1; // Default to page 1 if no page parameter is provided
+        const pageSize = 10; // Number of posts per page
+        const startIndex = (page - 1) * pageSize;
+        const endIndex = startIndex + pageSize;
+        const posts = yield Post_1.default.find()
+            .populate('user', ['username'])
+            .skip(startIndex)
+            .limit(pageSize);
         res.status(200).json({
             success: true,
             posts,

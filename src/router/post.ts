@@ -19,7 +19,8 @@ const router: Router = Router();
 //@router GET api/posts
 //desc get posts
 //access private
-router.get('/', verifyToken, getPosts);
+router.get('/',  getPosts);
+// router.get('/', verifyToken, getPosts);
 
 //@router POST api/posts
 //desc Creates a post

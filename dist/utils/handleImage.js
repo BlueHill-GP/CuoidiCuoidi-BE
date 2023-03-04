@@ -56,6 +56,7 @@ const s3Client = new client_s3_2.S3Client({
 });
 const s3 = new aws_sdk_1.default.S3({ region: process.env.REGION_s3 });
 const uploadImage = (userId, file) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log('ok upload');
     const fileContents = Buffer.from(file.data);
     const key = userId + Date.now().toString();
     const params = {
