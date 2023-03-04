@@ -7,11 +7,38 @@ import { deleteImage, uploadImage } from '../utils/handleImage';
 
 // const router: Router = Router();
 
+const getPostsByUser = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const page: any = req.query.page || 1; // Default to page 1 if no page parameter is provided
+    const pageSize = 1; // Number of posts per page
+    const startIndex = (page - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    const posts = await Post.find({ user: req.userId })
+      .populate('user', ['username'])
+      .skip(startIndex)
+      .limit(pageSize);;
+    res.status(200).json({
+      success: true,
+      posts,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+    });
+  }
+};
 const getPosts = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const posts = await Post.find({ user: req.userId }).populate('user', [
-      'username',
-    ]);
+    const page: any = req.query.page || 1; // Default to page 1 if no page parameter is provided
+    const pageSize = 10; // Number of posts per page
+    const startIndex = (page - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    const posts = await Post.find()
+      .populate('user', ['username'])
+      .skip(startIndex)
+      .limit(pageSize);
     res.status(200).json({
       success: true,
       posts,

@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.userSchema = void 0;
+exports.loginSchema = exports.userSchema = void 0;
 const joi_1 = __importDefault(require("joi"));
 exports.userSchema = joi_1.default.object({
     username: joi_1.default.string()
@@ -27,6 +27,26 @@ exports.userSchema = joi_1.default.object({
     email: joi_1.default.string().email().required(),
     phoneNumber: joi_1.default.string()
         .pattern(/^0\d{9}$/)
+        .required(),
+});
+exports.loginSchema = joi_1.default.object({
+    username: joi_1.default.string()
+        .trim()
+        .pattern(/^[^0-9]+$/)
+        .pattern(/^\S.*\S$/)
+        .replace(/[\s]+/g, ' ')
+        .strict()
+        .min(3)
+        .regex(/^.*\S*.*$/)
+        .max(30)
+        .required(),
+    password: joi_1.default.string()
+        .pattern(/^(?=.*[a-zA-Z])/)
+        .pattern(/^(?=.*\d)/)
+        .pattern(/^(?=.*[!@#$%^&*])/)
+        .trim()
+        .strict()
+        .min(6)
         .required(),
 });
 //# sourceMappingURL=userValidationSchema.js.map

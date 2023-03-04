@@ -24,6 +24,8 @@ const s3Client = new S3Client({
 const s3 = new AWS.S3({ region: process.env.REGION_s3 });
 
 const uploadImage = async (userId: string, file: UploadedFile) => {
+  console.log('ok upload');
+  
   const fileContents = Buffer.from(file.data as ArrayBuffer);
   const key = userId + Date.now().toString();
   

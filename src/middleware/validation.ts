@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import { createResponse as response } from '../utils/response';
-import { userSchema } from '../validation/userValidationSchema';
+import { loginSchema, userSchema } from '../validation/userValidationSchema';
 
 export const userValidation = (req: Request, res: Response, next: any) => {
-  const validation = userSchema.validate(req.body);
+  const validation = loginSchema.validate(req.body);
 
   if (validation.error) {
     return res.status(400).json({
@@ -15,14 +15,11 @@ export const userValidation = (req: Request, res: Response, next: any) => {
 };
 
 export const checkImage = (req: Request, res: Response, next: any) => {
-  // console.log("hii    :",req.body);
-  // console.log('hii    :', req.params);
-  // console.log('hii    :', req);
+  console.log(req);
   
   const files = Array.isArray(req.files.images)
     ? req.files.images
     : [req.files.images];
-console.log(files);
 
   if (files.length === 0) {
     return response(res, 400, false, 'Please upload a file');
@@ -31,6 +28,6 @@ console.log(files);
     if (!file.mimetype.startsWith('image')) {
       return response(res, 400, false, 'Please upload an image');
     }
-  })
+  });
   next();
 };

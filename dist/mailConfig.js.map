@@ -1,0 +1,1 @@
+{"version":3,"file":"mailConfig.js","sourceRoot":"","sources":["../src/mailConfig.ts"],"names":[],"mappings":";;AAAA,kBAAe;IACb,IAAI,EAAE,gBAAgB;IACtB,IAAI,EAAE,GAAG;IACT,MAAM,EAAE,IAAI;IACZ,IAAI,EAAE;QACJ,IAAI,EAAE,OAAO,CAAC,GAAG,CAAC,KAAK;QACvB,IAAI,EAAE,OAAO,CAAC,GAAG,CAAC,UAAU;KAC7B;CACF,CAAC"}

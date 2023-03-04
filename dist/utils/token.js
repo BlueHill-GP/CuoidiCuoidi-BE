@@ -45,7 +45,7 @@ const generateToken = (payload) => {
         expiresIn: '2h',
     });
     const refreshToken = jsonwebtoken_1.default.sign({ userId: payload }, process.env.REFRESH_TOKEN_SECRET, {
-        expiresIn: '2h',
+        expiresIn: '2d',
     });
     return { accessToken, refreshToken };
 };

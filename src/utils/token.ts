@@ -11,7 +11,7 @@ const generateToken = (payload: string) => {
     { userId: payload },
     process.env.REFRESH_TOKEN_SECRET,
     {
-      expiresIn: '2h',
+      expiresIn: '2d',
     }
   );
   return { accessToken, refreshToken };

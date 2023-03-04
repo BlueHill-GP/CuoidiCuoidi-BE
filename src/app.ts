@@ -9,6 +9,8 @@ import connectDB from './config/db';
 import authRouter from './router/auth';
 import postRouter from './router/post';
 import servicePackagesRouter from './router/servicePackage';
+import bookingRouter from './router/booking';
+import mailRouter from './router/mail';
 
 mongoose.set('strictQuery', false);
 connectDB();
@@ -25,11 +27,13 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const PORT = 4000;
 
 app.get('/', (req, res) => {
-  res.send('May be i love you all ❤️');
+  res.send('I love you all ❤️');
 });
 app.use('/api/auth', authRouter);
 app.use('/api/posts', postRouter);
 app.use('/api/service-packages', servicePackagesRouter);
+app.use('/api/booking', bookingRouter);
+app.use('/api/mail', mailRouter);
 
 app.listen(PORT, () => {
   console.log('love u');

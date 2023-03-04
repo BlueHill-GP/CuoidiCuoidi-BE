@@ -132,7 +132,7 @@ const createServicePackage = async (
     return res.status(200).json({
       success: true,
       message: 'Post created successfully',
-      post: newServicePackage,
+       newServicePackage,
     });
   } catch (error) {
     console.log(error);
