@@ -3,14 +3,13 @@ import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import fileUpload from 'express-fileupload';
 import cors from 'cors';
-import logger, { expressLogger } from './logger';
+import logger, { expressLogger } from './config/logger';
 import connectDB from './config/db';
 
 import authRouter from './router/auth';
 import postRouter from './router/post';
 import servicePackagesRouter from './router/servicePackage';
 import bookingRouter from './router/booking';
-import mailRouter from './router/mail';
 
 mongoose.set('strictQuery', false);
 connectDB();
@@ -19,7 +18,6 @@ const app = express();
 app.use(expressLogger);
 app.use(cors());
 app.use(fileUpload());
-
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -33,7 +31,6 @@ app.use('/api/auth', authRouter);
 app.use('/api/posts', postRouter);
 app.use('/api/service-packages', servicePackagesRouter);
 app.use('/api/booking', bookingRouter);
-app.use('/api/mail', mailRouter);
 
 app.listen(PORT, () => {
   console.log('love u');

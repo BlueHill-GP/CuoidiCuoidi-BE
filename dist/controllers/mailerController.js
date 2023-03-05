@@ -1,20 +1,11 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.mailRegister = void 0;
-const mailer_1 = require("../utils/mailer");
-const mailRegister = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const mailerUtils_1 = require("../utils/mailerUtils");
+const mailRegister = async (req, res) => {
     const { name, email, message } = req.body;
     try {
-        yield (0, mailer_1.sendMail)(email, `New message from ${name}`, message);
+        await (0, mailerUtils_1.sendMail)(email, `New message from ${name}`, message);
         console.log('ok');
         res.send('Email sent successfully');
     }
@@ -22,6 +13,6 @@ const mailRegister = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         console.log(err);
         res.status(500).send('Failed to send email');
     }
-});
+};
 exports.mailRegister = mailRegister;
 //# sourceMappingURL=mailerController.js.map

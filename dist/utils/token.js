@@ -22,15 +22,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -50,16 +41,16 @@ const generateToken = (payload) => {
     return { accessToken, refreshToken };
 };
 exports.generateToken = generateToken;
-const updateRefreshToken = (userId, refreshToken) => __awaiter(void 0, void 0, void 0, function* () {
+const updateRefreshToken = async (userId, refreshToken) => {
     try {
-        const user = yield RefreshToken_1.default.findOne({ userId: userId });
+        const user = await RefreshToken_1.default.findOne({ userId: userId });
         if (user) {
-            yield RefreshToken_1.default.findByIdAndUpdate(user._id, {
+            await RefreshToken_1.default.findByIdAndUpdate(user._id, {
                 refreshToken: refreshToken,
             });
         }
         else {
-            yield RefreshToken_1.default.create({
+            await RefreshToken_1.default.create({
                 userId: userId,
                 refreshToken: refreshToken,
             });
@@ -68,6 +59,6 @@ const updateRefreshToken = (userId, refreshToken) => __awaiter(void 0, void 0, v
     catch (error) {
         console.log(error);
     }
-});
+};
 exports.updateRefreshToken = updateRefreshToken;
 //# sourceMappingURL=token.js.map

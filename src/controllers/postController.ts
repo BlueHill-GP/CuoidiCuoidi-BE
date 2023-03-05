@@ -1,9 +1,8 @@
 import { Router, Request, Response } from 'express';
 import { AuthenticatedRequest } from '../interfaces/request';
 import Post, { IPost } from '../models/Post';
-import { createResponse as response } from '../utils/response';
-import { deleteImage, uploadImage } from '../utils/handleImage';
-
+import { createResponse as response } from '../utils/responseUtils';
+import { deleteImage, uploadImage } from '../utils/imageUtils';
 
 // const router: Router = Router();
 
@@ -16,7 +15,7 @@ const getPostsByUser = async (req: AuthenticatedRequest, res: Response) => {
     const posts = await Post.find({ user: req.userId })
       .populate('user', ['username'])
       .skip(startIndex)
-      .limit(pageSize);;
+      .limit(pageSize);
     res.status(200).json({
       success: true,
       posts,
@@ -57,7 +56,7 @@ const deletePost = async (req: AuthenticatedRequest, res: Response) => {
     const postUpdateCondition = { _id: req.params.id, user: req.userId };
     const post = await Post.findById({ _id: req.params.id });
     console.log(post);
-    
+
     await Promise.all(post.image.map((file) => deleteImage(file)));
     const deletedPost = await Post.findOneAndDelete(postUpdateCondition);
 
@@ -122,7 +121,6 @@ const updatePost = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-
 const createPost = async (req: AuthenticatedRequest, res: Response) => {
   const { description } = req.body;
 
@@ -156,6 +154,5 @@ const createPost = async (req: AuthenticatedRequest, res: Response) => {
     return response(res, 500, false, 'Internal Server Error');
   }
 };
-
 
 export { createPost, updatePost, deletePost, getPosts };

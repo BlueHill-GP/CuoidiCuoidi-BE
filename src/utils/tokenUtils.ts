@@ -4,9 +4,13 @@ import RefreshToken from '../models/RefreshToken';
 dotenv.config();
 
 const generateToken = (payload: string) => {
-  const accessToken = Jwt.sign({ userId: payload }, process.env.ACCESS_TOKEN_SECRET, {
-    expiresIn: '2h',
-  });
+  const accessToken = Jwt.sign(
+    { userId: payload },
+    process.env.ACCESS_TOKEN_SECRET,
+    {
+      expiresIn: '2h',
+    }
+  );
   const refreshToken = Jwt.sign(
     { userId: payload },
     process.env.REFRESH_TOKEN_SECRET,

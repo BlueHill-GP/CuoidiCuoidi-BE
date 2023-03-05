@@ -48,5 +48,6 @@ exports.loginSchema = joi_1.default.object({
         .strict()
         .min(6)
         .required(),
+    email: joi_1.default.string().email().required(),
 });
 //# sourceMappingURL=userValidationSchema.js.map

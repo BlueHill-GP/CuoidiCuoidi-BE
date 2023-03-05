@@ -1,7 +1,7 @@
 import { NextFunction, Response } from 'express';
 import { AuthenticatedRequest } from '../interfaces/request';
 import ServicePackage from '../models/servicePackage';
-import { createResponse as response } from '../utils/response';
+import { createResponse as response } from '../utils/responseUtils';
 
 export const verifyPackageService = async (
   req: AuthenticatedRequest,

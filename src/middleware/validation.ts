@@ -1,8 +1,27 @@
 import { Request, Response } from 'express';
-import { createResponse as response } from '../utils/response';
-import { loginSchema, userSchema } from '../validation/userValidationSchema';
+import { createResponse as response } from '../utils/responseUtils';
+import {
+  loginSchema,
+  registerSchema,
+} from '../validation/userValidationSchema';
 
-export const userValidation = (req: Request, res: Response, next: any) => {
+export const userRegisterValidation = (
+  req: Request,
+  res: Response,
+  next: any
+) => {
+  const validation = registerSchema.validate(req.body);
+
+  if (validation.error) {
+    return res.status(400).json({
+      errors: validation.error.details[0].path[0] + ' is not a valid',
+    });
+  }
+
+  next();
+};
+
+export const userLoginValidation = (req: Request, res: Response, next: any) => {
   const validation = loginSchema.validate(req.body);
 
   if (validation.error) {
@@ -16,7 +35,7 @@ export const userValidation = (req: Request, res: Response, next: any) => {
 
 export const checkImage = (req: Request, res: Response, next: any) => {
   console.log(req);
-  
+
   const files = Array.isArray(req.files.images)
     ? req.files.images
     : [req.files.images];

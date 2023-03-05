@@ -38,7 +38,6 @@
 
 // export default Post;
 
-
 import { number } from 'joi';
 import mongoose, { Schema, Document, Model } from 'mongoose';
 

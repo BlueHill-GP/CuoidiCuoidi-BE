@@ -1,11 +1,8 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const bookingController_1 = require("../controllers/bookingController");
-const auth_1 = __importDefault(require("../middleware/auth"));
+const auth_1 = require("../middleware/auth");
 const servicePackage_1 = require("../middleware/servicePackage");
 const router = (0, express_1.Router)();
 //@router GET api/posts
@@ -20,7 +17,7 @@ router.post('/', servicePackage_1.verifyPackageService, bookingController_1.crea
 //desc update a post
 //access private
 // router.put('/:id', updateBooking);
-router.put('/:id', auth_1.default, servicePackage_1.verifyPackageService, bookingController_1.updateBookingStatus);
+router.put('/:id', auth_1.verifyToken, servicePackage_1.verifyPackageService, bookingController_1.updateBookingStatus);
 //@router DELETE api/posts
 //desc delete a post
 //access private

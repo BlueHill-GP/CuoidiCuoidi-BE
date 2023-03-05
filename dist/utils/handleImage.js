@@ -22,15 +22,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -55,7 +46,7 @@ const s3Client = new client_s3_2.S3Client({
     },
 });
 const s3 = new aws_sdk_1.default.S3({ region: process.env.REGION_s3 });
-const uploadImage = (userId, file) => __awaiter(void 0, void 0, void 0, function* () {
+const uploadImage = async (userId, file) => {
     console.log('ok upload');
     const fileContents = Buffer.from(file.data);
     const key = userId + Date.now().toString();
@@ -66,16 +57,16 @@ const uploadImage = (userId, file) => __awaiter(void 0, void 0, void 0, function
         ContentType: file.mimetype,
         ACL: 'public-read',
     };
-    const result = yield s3.upload(params).promise();
+    const result = await s3.upload(params).promise();
     if (result.Location) {
         return process.env.LINK_BUCKET_S3 + key;
     }
     else {
         return false;
     }
-});
+};
 exports.uploadImage = uploadImage;
-const deleteImage = (urlImage) => __awaiter(void 0, void 0, void 0, function* () {
+const deleteImage = async (urlImage) => {
     const key = urlImage.replace(process.env.LINK_S3, '');
     console.log(key);
     const bucketParams = {
@@ -83,13 +74,13 @@ const deleteImage = (urlImage) => __awaiter(void 0, void 0, void 0, function* ()
         Key: key,
     };
     try {
-        const data = yield s3Client.send(new client_s3_1.DeleteObjectCommand(bucketParams));
+        const data = await s3Client.send(new client_s3_1.DeleteObjectCommand(bucketParams));
         return data;
     }
     catch (err) {
         console.log('Error', err);
         return false;
     }
-});
+};
 exports.deleteImage = deleteImage;
 //# sourceMappingURL=handleImage.js.map

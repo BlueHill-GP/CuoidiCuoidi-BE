@@ -5,9 +5,8 @@ import {
   getServicePackages,
   updateServicePackage,
 } from '../controllers/servicePackageController';
-import verifyToken from '../middleware/auth';
+import { verifyToken } from '../middleware/auth';
 import { checkImage } from '../middleware/validation';
-
 
 const router: Router = Router();
 

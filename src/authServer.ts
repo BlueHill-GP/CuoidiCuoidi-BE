@@ -2,7 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 
-import logger, { expressLogger } from './logger';
+import logger, { expressLogger } from './config/logger';
 import connectDB from './config/db';
 
 import authRouter from './router/auth';

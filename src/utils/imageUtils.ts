@@ -25,10 +25,10 @@ const s3 = new AWS.S3({ region: process.env.REGION_s3 });
 
 const uploadImage = async (userId: string, file: UploadedFile) => {
   console.log('ok upload');
-  
+
   const fileContents = Buffer.from(file.data as ArrayBuffer);
   const key = userId + Date.now().toString();
-  
+
   const params: AWS.S3.PutObjectRequest = {
     Bucket: process.env.BUCKET_s3,
     Key: key,
@@ -45,7 +45,6 @@ const uploadImage = async (userId: string, file: UploadedFile) => {
     return false;
   }
 };
-
 
 const deleteImage = async (urlImage: string) => {
   const key = urlImage.replace(process.env.LINK_S3, '');

@@ -5,12 +5,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const authController_1 = require("../controllers/authController");
+const auth_1 = require("../middleware/auth");
+// import verifyToken from '../middleware/auth';
 const validation_1 = require("../middleware/validation");
 const router = express_1.default.Router();
 // @router POST api/user/register
 // @desc Register user
 // @access Public
 router.post('/register', validation_1.userValidation, authController_1.register);
+router.post('/register/otp', auth_1.verifyOtp);
 // @router POST api/auth/login
 // @desc Login user
 // @access Public
