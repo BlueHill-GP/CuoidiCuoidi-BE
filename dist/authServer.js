@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const body_parser_1 = __importDefault(require("body-parser"));
-const logger_1 = require("./logger");
+const logger_1 = require("./config/logger");
 const db_1 = __importDefault(require("./config/db"));
 const auth_1 = __importDefault(require("./router/auth"));
 mongoose_1.default.set('strictQuery', false);

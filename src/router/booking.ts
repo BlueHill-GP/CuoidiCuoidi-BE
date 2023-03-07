@@ -1,6 +1,10 @@
 import { Router } from 'express';
-import { createABooking, updateBooking, updateBookingStatus } from '../controllers/bookingController';
-import verifyToken from '../middleware/auth';
+import {
+  createABooking,
+  updateBooking,
+  updateBookingStatus,
+} from '../controllers/bookingController';
+import { verifyToken } from '../middleware/auth';
 import { verifyPackageService } from '../middleware/servicePackage';
 
 const router: Router = Router();

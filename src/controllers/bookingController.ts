@@ -3,7 +3,7 @@ import { IBooking } from '../interfaces/module';
 import { AuthenticatedRequest } from '../interfaces/request';
 import Booking from '../models/booking';
 import ServicePackage from '../models/servicePackage';
-import { createResponse as response } from '../utils/response';
+import { createResponse as response } from '../utils/responseUtils';
 
 export const createABooking = async (req: Request, res: Response) => {
   const {

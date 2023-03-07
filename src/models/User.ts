@@ -1,20 +1,35 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
 
-interface IUser extends Document {
+export interface IUser extends Document {
   username: string;
   password: string;
-  createAt: Date;
+  createAt?: Date;
 }
 
 const UserSchema: Schema = new mongoose.Schema({
   username: {
     type: String,
     required: true,
-    unique: true,
   },
   password: {
     type: String,
     required: true,
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  phone: {
+    type: String,
+    required: true,
+    unique: true,
+
+  },
+  userType: {
+    type: String,
+    required: true,
+    enum: ['photographer', 'makeup', 'couple'],
   },
   createAt: {
     type: Date,

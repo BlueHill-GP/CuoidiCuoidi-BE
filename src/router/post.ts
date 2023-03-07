@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import verifyToken from '../middleware/auth';
+import { verifyToken } from '../middleware/auth';
 import Post from '../models/Post';
 import {
   getPosts,
@@ -8,7 +8,7 @@ import {
   deletePost,
 } from '../controllers/postController';
 import { checkImage } from '../middleware/validation';
-import { deleteImage } from '../utils/handleImage';
+import { deleteImage } from '../utils/imageUtils';
 // import { deleteImage } from '../utils/handleImage';
 
 interface AuthenticatedRequest extends Request {
@@ -19,7 +19,7 @@ const router: Router = Router();
 //@router GET api/posts
 //desc get posts
 //access private
-router.get('/',  getPosts);
+router.get('/', getPosts);
 // router.get('/', verifyToken, getPosts);
 
 //@router POST api/posts
@@ -37,9 +37,8 @@ router.put('/:id', verifyToken, updatePost);
 //access private
 router.delete('/:id', verifyToken, deletePost);
 
-router.get('/delete',  deleteImage);
+router.get('/delete', deleteImage);
 // router.get('/dedehehehe', run);
-
 
 // router.post('/uploads', checkImage, upUps);
 // router.post('/uploads', verifyToken, checkImage, createPostTest);

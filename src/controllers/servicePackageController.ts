@@ -1,8 +1,8 @@
 import { Router, Request, Response } from 'express';
 import { AuthenticatedRequest } from '../interfaces/request';
 
-import { createResponse as response } from '../utils/response';
-import { deleteImage, uploadImage } from '../utils/handleImage';
+import { createResponse as response } from '../utils/responseUtils';
+import { deleteImage, uploadImage } from '../utils/imageUtils';
 import ServicePackage, { IServicePackage } from '../models/servicePackage';
 
 const getServicePackages = async (req: AuthenticatedRequest, res: Response) => {
@@ -106,8 +106,8 @@ const createServicePackage = async (
 ) => {
   const { title, description, price } = req.body;
   const userIP = req.socket.remoteAddress;
-  console.log("userIb: 34234: ",userIP);
-  
+  console.log('userIb: 34234: ', userIP);
+
   const files = Array.isArray(req.files.images)
     ? req.files.images
     : [req.files.images];
@@ -132,7 +132,7 @@ const createServicePackage = async (
     return res.status(200).json({
       success: true,
       message: 'Post created successfully',
-       newServicePackage,
+      newServicePackage,
     });
   } catch (error) {
     console.log(error);
