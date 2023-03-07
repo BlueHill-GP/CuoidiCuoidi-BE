@@ -18,7 +18,6 @@ const getPostsByUser = async (req, res) => {
             .populate('user', ['username'])
             .skip(startIndex)
             .limit(pageSize);
-        ;
         res.status(200).json({
             success: true,
             posts,

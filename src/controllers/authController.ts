@@ -9,17 +9,13 @@ import { generateOTP } from '../utils/OTPUtils';
 import UserInfoRedis from '../repositories/UserRedisRepository';
 import OtpRedis from '../repositories/OtpRedisRepository';
 import { mailRegister } from '../utils/mailUtils';
+import UserInfo from '../models/UserInfo';
 
 const register = async (req: Request, res: Response) => {
   // validation
   const { username, password, email, phone, userType } = req.body;
 
   try {
-    //check if user already exists
-    const user = await User.findOne({ email });
-    if (user) {
-      return response(res, 400, false, 'email already exists');
-    }
     // start user save user in redis
     const hashedPassword = await argon2.hash(password);
 
@@ -59,7 +55,9 @@ const verifyRegister = async (req, res) => {
     const user = JSON.parse(reply);
     try {
       const newUser = new User(user);
+      const newUserInfo = new UserInfo({ userId: newUser._id });
       newUser.save();
+      newUserInfo.save();
       response(res, 200, true, 'user successfully registered');
     } catch (error) {
       console.log(error);

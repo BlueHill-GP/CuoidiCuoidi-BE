@@ -18,7 +18,6 @@ const verifyToken = (req, res, next) => {
     try {
         const decoded = jsonwebtoken_1.default.verify(token, process.env.ACCESS_TOKEN_SECRET);
         req.userId = decoded.userId;
-        console.log('id user middleware: ', req.userId);
         next();
     }
     catch (error) {
@@ -33,10 +32,7 @@ const verifyOtp = async (req, res, next) => {
     const { otp, email } = req.body;
     try {
         await OtpRedisRepository_1.default.get(email, (err, reply) => {
-            console.log(typeof reply);
-            reply = JSON.parse(reply);
-            console.log(reply);
-            if (reply.otp === otp) {
+            if (reply === otp) {
                 next();
             }
             else {

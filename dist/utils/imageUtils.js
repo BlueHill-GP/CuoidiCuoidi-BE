@@ -47,7 +47,6 @@ const s3Client = new client_s3_2.S3Client({
 });
 const s3 = new aws_sdk_1.default.S3({ region: process.env.REGION_s3 });
 const uploadImage = async (userId, file) => {
-    console.log('ok upload');
     const fileContents = Buffer.from(file.data);
     const key = userId + Date.now().toString();
     const params = {
@@ -68,7 +67,6 @@ const uploadImage = async (userId, file) => {
 exports.uploadImage = uploadImage;
 const deleteImage = async (urlImage) => {
     const key = urlImage.replace(process.env.LINK_S3, '');
-    console.log(key);
     const bucketParams = {
         Bucket: 'cuoidicuoidi-store',
         Key: key,

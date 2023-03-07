@@ -13,28 +13,28 @@ const OTPUtils_1 = require("../utils/OTPUtils");
 const UserRedisRepository_1 = __importDefault(require("../repositories/UserRedisRepository"));
 const OtpRedisRepository_1 = __importDefault(require("../repositories/OtpRedisRepository"));
 const mailUtils_1 = require("../utils/mailUtils");
+const UserInfo_1 = __importDefault(require("../models/UserInfo"));
 const register = async (req, res) => {
     // validation
-    const { username, password, email } = req.body;
-    console.log(username, password);
+    const { username, password, email, phone, userType } = req.body;
     try {
-        //check if user already exists
-        const user = await User_1.default.findOne({ username });
-        if (user) {
-            return (0, responseUtils_1.createResponse)(res, 400, false, 'User already exists');
-        }
-        // start user registration
+        // start user save user in redis
         const hashedPassword = await argon2_1.default.hash(password);
         const otp = (0, OTPUtils_1.generateOTP)();
         const userInfo = {
-            user: { username: username, password: hashedPassword, email: email },
+            username,
+            password: hashedPassword,
+            email,
+            phone,
+            userType,
         };
         const dataOtp = {
             otp: otp,
-            email: email
+            email: email,
         };
         UserRedisRepository_1.default.set(userInfo);
         OtpRedisRepository_1.default.set(dataOtp);
+        // send OTP in mail
         (0, mailUtils_1.mailRegister)(otp, email);
         (0, responseUtils_1.createResponse)(res, 200, true, 'We was send you an OPT, Please check it in your email.');
     }
@@ -47,25 +47,31 @@ exports.register = register;
 const verifyRegister = async (req, res) => {
     const { email } = req.body;
     UserRedisRepository_1.default.get(email, (err, reply) => {
-        console.log(typeof reply);
-        console.log("verifyRegister: ", reply);
+        const user = JSON.parse(reply);
+        try {
+            const newUser = new User_1.default(user);
+            const newUserInfo = new UserInfo_1.default({ userId: newUser._id });
+            newUser.save();
+            newUserInfo.save();
+            (0, responseUtils_1.createResponse)(res, 200, true, 'user successfully registered');
+        }
+        catch (error) {
+            console.log(error);
+            return (0, responseUtils_1.createResponse)(res, 500, false, 'Internal server error');
+        }
     });
 };
 exports.verifyRegister = verifyRegister;
 const login = async (req, res) => {
-    const { username, password } = req.body;
-    console.log(username, password);
-    if (!username || !password) {
-        return (0, responseUtils_1.createResponse)(res, 400, false, 'Missing username or password?');
-    }
+    const { email, password } = req.body;
     try {
-        const user = await User_1.default.findOne({ username });
+        const user = await User_1.default.findOne({ email });
         if (!user) {
-            return (0, responseUtils_1.createResponse)(res, 404, false, 'Incorrect username or password?');
+            return (0, responseUtils_1.createResponse)(res, 404, false, 'Incorrect email or password?');
         }
         const isMatch = await argon2_1.default.verify(user.password, password);
         if (!isMatch) {
-            return (0, responseUtils_1.createResponse)(res, 400, false, 'Incorrect username or password?');
+            return (0, responseUtils_1.createResponse)(res, 400, false, 'Incorrect email or password?');
         }
         const token = (0, tokenUtils_1.generateToken)(user._id);
         (0, tokenUtils_1.updateRefreshToken)(user._id, token.refreshToken);

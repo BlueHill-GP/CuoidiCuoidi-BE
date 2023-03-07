@@ -5,11 +5,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.get = exports.set = void 0;
 const redisUtils_1 = __importDefault(require("../utils/redisUtils"));
-const PREFIX_KEY = "UserInfo:";
+const PREFIX_KEY = 'UserInfo:';
 const EXPIRE = 1800;
-const set = (info, callBack) => {
-    const key = PREFIX_KEY + info.user.email;
-    const value = JSON.stringify(info);
+const set = (user, callBack) => {
+    const key = PREFIX_KEY + user.email;
+    const value = JSON.stringify(user);
     return redisUtils_1.default.set(key, value, EXPIRE, callBack);
 };
 exports.set = set;
@@ -19,6 +19,6 @@ const get = (email, callBack) => {
 exports.get = get;
 exports.default = {
     set: exports.set,
-    get: exports.get
+    get: exports.get,
 };
 //# sourceMappingURL=UserRedisRepository.js.map

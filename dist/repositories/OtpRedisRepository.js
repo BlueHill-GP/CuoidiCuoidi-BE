@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.get = exports.set = void 0;
 const redisUtils_1 = __importDefault(require("../utils/redisUtils"));
-const PREFIX_KEY = "OTP:";
+const PREFIX_KEY = 'OTP:';
 const EXPIRE = 100;
 const set = (payload, callBack) => {
     const key = PREFIX_KEY + payload.email;
@@ -19,6 +19,6 @@ const get = (email, callBack) => {
 exports.get = get;
 exports.default = {
     set: exports.set,
-    get: exports.get
+    get: exports.get,
 };
 //# sourceMappingURL=OtpRedisRepository.js.map

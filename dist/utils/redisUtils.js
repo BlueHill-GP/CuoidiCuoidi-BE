@@ -11,6 +11,7 @@ const get = (key, callBack) => {
     return redis_1.default.get(key, callBack);
 };
 exports.default = {
-    get, set
+    get,
+    set,
 };
 //# sourceMappingURL=redisUtils.js.map

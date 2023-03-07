@@ -69,7 +69,7 @@ exports.updateServicePackage = updateServicePackage;
 const createServicePackage = async (req, res) => {
     const { title, description, price } = req.body;
     const userIP = req.socket.remoteAddress;
-    console.log("userIb: 34234: ", userIP);
+    console.log('userIb: 34234: ', userIP);
     const files = Array.isArray(req.files.images)
         ? req.files.images
         : [req.files.images];

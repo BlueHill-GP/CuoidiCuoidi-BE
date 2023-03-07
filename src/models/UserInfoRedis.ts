@@ -1,5 +1,3 @@
-import { IUser } from './User';
-
 export default interface UserInfoRedis {
   username: string;
   password: string;

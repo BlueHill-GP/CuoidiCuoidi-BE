@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const redis_1 = __importDefault(require("redis"));
 const client = redis_1.default.createClient({
     host: 'localhost',
-    port: 6379
+    port: 6379,
 });
 client.on('connect', () => {
     console.log('Redis client connected');

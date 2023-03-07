@@ -26,7 +26,6 @@ export const verifyToken = (
       process.env.ACCESS_TOKEN_SECRET as string
     ) as { userId: string };
     req.userId = decoded.userId;
-    console.log('id user middleware: ', req.userId);
     next();
   } catch (error) {
     console.log(error);
