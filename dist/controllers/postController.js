@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getPosts = exports.deletePost = exports.updatePost = exports.createPost = void 0;
+exports.getPostsByUserId = exports.getPosts = exports.deletePost = exports.updatePost = exports.createPost = void 0;
 const Post_1 = __importDefault(require("../models/Post"));
 const responseUtils_1 = require("../utils/responseUtils");
 const imageUtils_1 = require("../utils/imageUtils");
@@ -55,6 +55,31 @@ const getPosts = async (req, res) => {
     }
 };
 exports.getPosts = getPosts;
+const getPostsByUserId = async (req, res) => {
+    try {
+        const userId = req.params.id;
+        const page = req.query.page || 1; // Default to page 1 if no page parameter is provided
+        const pageSize = 10; // Number of posts per page
+        const startIndex = (page - 1) * pageSize;
+        const endIndex = startIndex + pageSize;
+        const posts = await Post_1.default.find({ user: userId })
+            .populate('user', ['username'])
+            .skip(startIndex)
+            .limit(pageSize);
+        res.status(200).json({
+            success: true,
+            posts,
+        });
+    }
+    catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            success: false,
+            message: 'Internal server error',
+        });
+    }
+};
+exports.getPostsByUserId = getPostsByUserId;
 const deletePost = async (req, res) => {
     try {
         const postUpdateCondition = { _id: req.params.id, user: req.userId };

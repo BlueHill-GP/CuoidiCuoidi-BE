@@ -1,26 +1,24 @@
-import { Router, Request, Response } from 'express';
+import { Router } from 'express';
 import { verifyToken } from '../middleware/auth';
-import Post from '../models/Post';
 import {
   getPosts,
   createPost,
   updatePost,
   deletePost,
+  getPostsByUserId,
 } from '../controllers/postController';
 import { checkImage } from '../middleware/validation';
 import { deleteImage } from '../utils/imageUtils';
-// import { deleteImage } from '../utils/handleImage';
 
-interface AuthenticatedRequest extends Request {
-  userId: string;
-}
 const router: Router = Router();
 
 //@router GET api/posts
 //desc get posts
 //access private
 router.get('/', getPosts);
-// router.get('/', verifyToken, getPosts);
+
+
+router.get('/:id', getPostsByUserId);
 
 //@router POST api/posts
 //desc Creates a post

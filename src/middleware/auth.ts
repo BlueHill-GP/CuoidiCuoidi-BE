@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
 import OtpRedis from '../repositories/OtpRedisRepository';
 import { createResponse as response } from '../utils/responseUtils';
+import { getBackOtpSchema } from '../validation/userValidationSchema';
 
 interface AuthenticatedRequest extends Request {
   userId?: string;
@@ -40,8 +41,8 @@ export const verifyOtp = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { otp, email } = req.body;
   try {
+    const { otp, email } = req.body;
     await OtpRedis.get(email, (err, reply) => {
       if (reply === otp) {
         next();
@@ -53,4 +54,31 @@ export const verifyOtp = async (
     console.log(error);
     return response(res, 500, false, 'Internal server error');
   }
+};
+
+export const userGetBackOtp = async (
+  req: Request,
+  res: Response,
+  next: any
+) => {
+  try {
+    const validation = getBackOtpSchema.validate(req.body);
+
+    if (validation.error) {
+      return res.status(400).json({
+        errors: validation.error.details[0].path[0] + ' is not a valid',
+      });
+    }
+   const { email } = req.body;
+   await OtpRedis.get(email, (err, reply) => {
+     if (reply) {
+       next();
+     } else {
+       return response(res, 400, false, 'Invalid OTP');
+     }
+   });
+ } catch (error) {
+   console.log(error);
+   return response(res, 500, false, 'Internal server error');
+ }
 };

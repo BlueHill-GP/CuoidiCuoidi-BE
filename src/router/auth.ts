@@ -4,8 +4,9 @@ import {
   login,
   getRefreshToken,
   verifyRegister,
+  resendOtp,
 } from '../controllers/authController';
-import { verifyOtp } from '../middleware/auth';
+import { userGetBackOtp, verifyOtp } from '../middleware/auth';
 // import verifyToken from '../middleware/auth';
 import {
   userLoginValidation,
@@ -18,6 +19,9 @@ const router = express.Router();
 // @desc Register user
 // @access Public
 router.post('/register', userRegisterValidation, register);
+
+router.post('/register/resend-OTP', userGetBackOtp, resendOtp);
+
 router.post('/register/otp', verifyOtp, verifyRegister);
 
 // @router POST api/auth/login
