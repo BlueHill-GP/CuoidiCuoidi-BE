@@ -10,7 +10,7 @@ const router = (0, express_1.Router)();
 //desc get posts
 //access private
 router.get('/', postController_1.getPosts);
-// router.get('/', verifyToken, getPosts);
+router.get('/:id', postController_1.getPostsByUserId);
 //@router POST api/posts
 //desc Creates a post
 //access private

@@ -55,7 +55,12 @@ const verifyRegister = async (req, res) => {
     const user = JSON.parse(reply);
     try {
       const newUser = new User(user);
-      const newUserInfo = new UserInfo({ userId: newUser._id });
+      const newUserInfo = new UserInfo({
+        userId: newUser._id,
+        username: user.username,
+        phone: user.phone,
+        userType: user.userType,
+      });
       newUser.save();
       newUserInfo.save();
       response(res, 200, true, 'user successfully registered');
@@ -66,6 +71,31 @@ const verifyRegister = async (req, res) => {
   });
 };
 
+const resendOtp = async (req, res) => {
+  const otp = generateOTP();
+  const { email } = req.body;
+  const dataOtp = {
+    otp: otp,
+    email: email,
+  };
+
+  try {
+    OtpRedis.set(dataOtp);
+    // send OTP in mail
+    mailRegister(otp, email);
+    response(
+      res,
+      200,
+      true,
+      'We was resend you an OPT, Please check it in your email again.'
+    );
+  } catch (error) {
+     console.log(error);
+     return response(res, 500, false, 'Internal server error');
+  }
+   
+
+ }
 const login = async (req: Request, res: Response<IResponse>) => {
   const { email, password } = req.body;
 
@@ -81,7 +111,7 @@ const login = async (req: Request, res: Response<IResponse>) => {
     }
     const token = generateToken(user._id);
     updateRefreshToken(user._id, token.refreshToken);
-    response(res, 200, true, 'Login successful', token);
+    response(res, 200, true, 'Login successful', { token, userId: user._id });
   } catch (err) {
     console.log(err);
     return response(res, 500, false, 'Internal server error');
@@ -109,4 +139,4 @@ const getRefreshToken = async (req: Request, res: Response<IResponse>) => {
     return response(res, 500, false, 'Internal server error');
   }
 };
-export { register, login, getRefreshToken, verifyRegister };
+export { register, login, getRefreshToken, verifyRegister, resendOtp };

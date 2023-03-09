@@ -11,14 +11,14 @@ export const userRegisterValidation = async(
   res: Response,
   next: any
 ) => {
-  let {email, phone}= req.body;
   const validation = registerSchema.validate(req.body);
-
+  
   if (validation.error) {
     return res.status(400).json({
       errors: validation.error.details[0].path[0] + ' is not a valid',
     });
   }
+  let {email, phone}= req.body;
   try {
      email = await User.findOne({ email });
   phone = await User.findOne({ phone });
@@ -32,6 +32,8 @@ export const userRegisterValidation = async(
   }
  
 };
+
+
 
 export const userLoginValidation = (req: Request, res: Response, next: any) => {
   const validation = loginSchema.validate(req.body);

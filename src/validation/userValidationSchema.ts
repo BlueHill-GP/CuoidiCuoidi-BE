@@ -43,3 +43,7 @@ export const loginSchema = Joi.object({
     .email()
     .required(),
 });
+
+export const getBackOtpSchema = Joi.object({
+  email: Joi.string().email().required(),
+});

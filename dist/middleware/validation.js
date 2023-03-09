@@ -8,13 +8,13 @@ const User_1 = __importDefault(require("../models/User"));
 const responseUtils_1 = require("../utils/responseUtils");
 const userValidationSchema_1 = require("../validation/userValidationSchema");
 const userRegisterValidation = async (req, res, next) => {
-    let { email, phone } = req.body;
     const validation = userValidationSchema_1.registerSchema.validate(req.body);
     if (validation.error) {
         return res.status(400).json({
             errors: validation.error.details[0].path[0] + ' is not a valid',
         });
     }
+    let { email, phone } = req.body;
     try {
         email = await User_1.default.findOne({ email });
         phone = await User_1.default.findOne({ phone });

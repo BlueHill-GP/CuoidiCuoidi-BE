@@ -13,6 +13,7 @@ const router = express_1.default.Router();
 // @desc Register user
 // @access Public
 router.post('/register', validation_1.userRegisterValidation, authController_1.register);
+router.post('/register/resend-OTP', auth_1.userGetBackOtp, authController_1.resendOtp);
 router.post('/register/otp', auth_1.verifyOtp, authController_1.verifyRegister);
 // @router POST api/auth/login
 // @desc Login user

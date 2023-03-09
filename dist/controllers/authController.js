@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.verifyRegister = exports.getRefreshToken = exports.login = exports.register = void 0;
+exports.resendOtp = exports.verifyRegister = exports.getRefreshToken = exports.login = exports.register = void 0;
 const argon2_1 = __importDefault(require("argon2"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const User_1 = __importDefault(require("../models/User"));
@@ -50,7 +50,12 @@ const verifyRegister = async (req, res) => {
         const user = JSON.parse(reply);
         try {
             const newUser = new User_1.default(user);
-            const newUserInfo = new UserInfo_1.default({ userId: newUser._id });
+            const newUserInfo = new UserInfo_1.default({
+                userId: newUser._id,
+                username: user.username,
+                phone: user.phone,
+                userType: user.userType,
+            });
             newUser.save();
             newUserInfo.save();
             (0, responseUtils_1.createResponse)(res, 200, true, 'user successfully registered');
@@ -62,6 +67,25 @@ const verifyRegister = async (req, res) => {
     });
 };
 exports.verifyRegister = verifyRegister;
+const resendOtp = async (req, res) => {
+    const otp = (0, OTPUtils_1.generateOTP)();
+    const { email } = req.body;
+    const dataOtp = {
+        otp: otp,
+        email: email,
+    };
+    try {
+        OtpRedisRepository_1.default.set(dataOtp);
+        // send OTP in mail
+        (0, mailUtils_1.mailRegister)(otp, email);
+        (0, responseUtils_1.createResponse)(res, 200, true, 'We was resend you an OPT, Please check it in your email again.');
+    }
+    catch (error) {
+        console.log(error);
+        return (0, responseUtils_1.createResponse)(res, 500, false, 'Internal server error');
+    }
+};
+exports.resendOtp = resendOtp;
 const login = async (req, res) => {
     const { email, password } = req.body;
     try {
@@ -75,7 +99,7 @@ const login = async (req, res) => {
         }
         const token = (0, tokenUtils_1.generateToken)(user._id);
         (0, tokenUtils_1.updateRefreshToken)(user._id, token.refreshToken);
-        (0, responseUtils_1.createResponse)(res, 200, true, 'Login successful', token);
+        (0, responseUtils_1.createResponse)(res, 200, true, 'Login successful', { token, userId: user._id });
     }
     catch (err) {
         console.log(err);

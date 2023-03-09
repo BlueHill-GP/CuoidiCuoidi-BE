@@ -3,10 +3,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.verifyOtp = exports.verifyToken = void 0;
+exports.userGetBackOtp = exports.verifyOtp = exports.verifyToken = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const OtpRedisRepository_1 = __importDefault(require("../repositories/OtpRedisRepository"));
 const responseUtils_1 = require("../utils/responseUtils");
+const userValidationSchema_1 = require("../validation/userValidationSchema");
 const verifyToken = (req, res, next) => {
     const authHeader = req.header('Authorization');
     const token = authHeader && authHeader.split(' ')[1];
@@ -29,8 +30,8 @@ const verifyToken = (req, res, next) => {
 };
 exports.verifyToken = verifyToken;
 const verifyOtp = async (req, res, next) => {
-    const { otp, email } = req.body;
     try {
+        const { otp, email } = req.body;
         await OtpRedisRepository_1.default.get(email, (err, reply) => {
             if (reply === otp) {
                 next();
@@ -46,4 +47,28 @@ const verifyOtp = async (req, res, next) => {
     }
 };
 exports.verifyOtp = verifyOtp;
+const userGetBackOtp = async (req, res, next) => {
+    try {
+        const validation = userValidationSchema_1.getBackOtpSchema.validate(req.body);
+        if (validation.error) {
+            return res.status(400).json({
+                errors: validation.error.details[0].path[0] + ' is not a valid',
+            });
+        }
+        const { email } = req.body;
+        await OtpRedisRepository_1.default.get(email, (err, reply) => {
+            if (reply) {
+                next();
+            }
+            else {
+                return (0, responseUtils_1.createResponse)(res, 400, false, 'Invalid OTP');
+            }
+        });
+    }
+    catch (error) {
+        console.log(error);
+        return (0, responseUtils_1.createResponse)(res, 500, false, 'Internal server error');
+    }
+};
+exports.userGetBackOtp = userGetBackOtp;
 //# sourceMappingURL=auth.js.map

@@ -51,6 +51,30 @@ const getPosts = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
+const getPostsByUserId = async (req: Request, res: Response) => {
+  try {
+    const userId = req.params.id;
+    const page: any = req.query.page || 1; // Default to page 1 if no page parameter is provided
+    const pageSize = 10; // Number of posts per page
+    const startIndex = (page - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    const posts = await Post.find({ user: userId })
+      .populate('user', ['username'])
+      .skip(startIndex)
+      .limit(pageSize);
+    res.status(200).json({
+      success: true,
+      posts,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+    });
+  }
+};
+
 const deletePost = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const postUpdateCondition = { _id: req.params.id, user: req.userId };
@@ -155,4 +179,4 @@ const createPost = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-export { createPost, updatePost, deletePost, getPosts };
+export { createPost, updatePost, deletePost, getPosts, getPostsByUserId };

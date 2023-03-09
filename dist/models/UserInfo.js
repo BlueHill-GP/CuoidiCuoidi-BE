@@ -29,6 +29,17 @@ const UserInfoSchema = new mongoose_1.default.Schema({
         type: mongoose_1.Schema.Types.ObjectId,
         ref: 'users',
     },
+    username: {
+        type: String,
+    },
+    fullUsername: {
+        type: String,
+    },
+    phone: {
+        type: String,
+        required: true,
+        unique: true,
+    },
     address: {
         type: String,
     },
@@ -41,6 +52,11 @@ const UserInfoSchema = new mongoose_1.default.Schema({
     },
     age: {
         type: Number,
+    },
+    userType: {
+        type: String,
+        required: true,
+        enum: ['photographer', 'makeup', 'couple'],
     },
     createAt: {
         type: Date,
