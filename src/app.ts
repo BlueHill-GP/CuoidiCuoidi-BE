@@ -11,6 +11,7 @@ import postRouter from './router/post';
 import servicePackagesRouter from './router/servicePackage';
 import bookingRouter from './router/booking';
 import UserRouter from './router/user';
+import paymentRouter from './router/payment';
 
 mongoose.set('strictQuery', false);
 connectDB();
@@ -33,6 +34,7 @@ app.use('/api/posts', postRouter);
 app.use('/api/service-packages', servicePackagesRouter);
 app.use('/api/booking', bookingRouter);
 app.use('/api/user', UserRouter);
+app.use('/api/payment', paymentRouter);
 
 app.listen(PORT, () => {
   console.log('love u');

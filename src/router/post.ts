@@ -1,11 +1,11 @@
 import { Router } from 'express';
-import { verifyToken } from '../middleware/auth';
+import { verifyToken, verifyTypeUser } from '../middleware/auth';
 import {
   getPosts,
   createPost,
   updatePost,
   deletePost,
-  getPostsByUserId,
+  getAllPostsByUserId,
 } from '../controllers/postController';
 import { checkImage } from '../middleware/validation';
 import { deleteImage } from '../utils/imageUtils';
@@ -18,12 +18,12 @@ const router: Router = Router();
 router.get('/', getPosts);
 
 
-router.get('/:id', getPostsByUserId);
+router.get('/:id', getAllPostsByUserId);
 
 //@router POST api/posts
 //desc Creates a post
 //access private
-router.post('/', verifyToken, checkImage, createPost);
+router.post('/', verifyToken, verifyTypeUser, checkImage, createPost);
 
 //@router PUT api/posts
 //desc update a post

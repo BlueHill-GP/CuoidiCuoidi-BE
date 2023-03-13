@@ -5,11 +5,53 @@ import { createResponse as response } from '../utils/responseUtils';
 import { deleteImage, uploadImage } from '../utils/imageUtils';
 import ServicePackage, { IServicePackage } from '../models/servicePackage';
 
-const getServicePackages = async (req: AuthenticatedRequest, res: Response) => {
+// const getServicePackages = async (req: AuthenticatedRequest, res: Response) => {
+//   try {
+//     const servicePackages = await ServicePackage.find({
+//       user: req.userId,
+//     }).populate('user', ['username']);
+//     response(
+//       res,
+//       200,
+//       true,
+//       'Get service packages successfully',
+//       servicePackages
+//     );
+//   } catch (error) {
+//     console.log(error);
+//     return response(res, 500, false, 'Internal Server Error');
+//   }
+// };
+
+const getAllServicePackagesByUserId = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const servicePackages = await ServicePackage.find({
-      user: req.userId,
+      user: req.params.id,
     }).populate('user', ['username']);
+    response(
+      res,
+      200,
+      true,
+      'Get service packages successfully 1',
+      servicePackages
+    );
+  } catch (error) {
+    console.log(error);
+    return response(res, 500, false, 'Internal Server Error');
+  }
+};
+
+const getAllServicePackagesById = async (
+  req: AuthenticatedRequest,
+  res: Response
+) => {
+  try {
+    console.log(req.params.id);
+    
+    const servicePackages = await ServicePackage.findById(
+     req.params.id,
+    )
+      .populate('user', ['username']);
     response(
       res,
       200,
@@ -105,8 +147,6 @@ const createServicePackage = async (
   res: Response
 ) => {
   const { title, description, price } = req.body;
-  const userIP = req.socket.remoteAddress;
-  console.log('userIb: 34234: ', userIP);
 
   const files = Array.isArray(req.files.images)
     ? req.files.images
@@ -144,5 +184,6 @@ export {
   createServicePackage,
   updateServicePackage,
   deleteServicePackage,
-  getServicePackages,
+  getAllServicePackagesByUserId,
+  getAllServicePackagesById,
 };

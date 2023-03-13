@@ -3,6 +3,7 @@ import { Request, Response, NextFunction } from 'express';
 import OtpRedis from '../repositories/OtpRedisRepository';
 import { createResponse as response } from '../utils/responseUtils';
 import { getBackOtpSchema } from '../validation/userValidationSchema';
+import User from '../models/User';
 
 interface AuthenticatedRequest extends Request {
   userId?: string;
@@ -81,4 +82,26 @@ export const userGetBackOtp = async (
    console.log(error);
    return response(res, 500, false, 'Internal server error');
  }
+};
+
+
+export const verifyTypeUser = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = await User.findById(req.userId); 
+    if (
+      user &&
+      (user.userType === 'photographer' || user.userType === 'makeup' )
+    ) {
+      next();
+    } else {
+      response(res, 400, false, 'You are not our partner');
+    };
+  } catch (error) {
+    console.log(error);
+    return response(res, 500, false, 'Internal server error');
+  }
 };

@@ -4,6 +4,7 @@ import { AuthenticatedRequest } from '../interfaces/request';
 import Booking from '../models/booking';
 import ServicePackage from '../models/servicePackage';
 import { createResponse as response } from '../utils/responseUtils';
+import BookingRedis from '../repositories/BookingRedisRepository';
 
 export const createABooking = async (req: Request, res: Response) => {
   const {
@@ -22,7 +23,7 @@ export const createABooking = async (req: Request, res: Response) => {
     notes,
   } = req.body;
   try {
-    const newBooking: IBooking = new Booking({
+    const newBooking = new Booking({
       customerId,
       customerName,
       customerAddress,
@@ -38,8 +39,9 @@ export const createABooking = async (req: Request, res: Response) => {
       notes,
     });
 
-    await newBooking.save();
-    response(res, 201, true, 'Booking created successfully', newBooking);
+    BookingRedis.set(newBooking);
+    // await newBooking.save();
+    response(res, 201, true, 'Booking created successfully', newBooking._id);
   } catch (error) {
     console.log(error);
     return response(res, 500, false, 'Internal Server Error');
@@ -52,6 +54,8 @@ export const updateBooking = async (
 ) => {
   try {
     const bookingId = req.params.id;
+    console.log(bookingId);
+
     const oldBooking = await Booking.findById(bookingId);
     if (!oldBooking) {
       return response(res, 404, false, 'Booking not found');
@@ -117,5 +121,70 @@ export const updateBookingStatus = async (
   } catch (error) {
     console.log(error);
     return response(res, 500, false, 'Internal Server Error');
+  }
+};
+
+export const getAllBookingByUser = async (
+  req: AuthenticatedRequest,
+  res: Response
+) => {
+  const { userId } = req.body;
+  try {
+    const bookings = await Booking.aggregate([
+      // {
+      //   $lookup: {
+      //     from: 'servicePackages',
+      //     localField: 'servicePackageId',
+      //     foreignField: '_id',
+      //     as: 'servicePackages',
+      //   },
+      // },
+      // {
+      //   $match: {
+      //     'servicePackage.user': userId,
+      //   },
+      // },
+
+      {
+        $lookup: {
+          from: 'servicePackages',
+          localField: 'serviceId',
+          foreignField: '_id',
+          as: 'servicePackage',
+        },
+      },
+      {
+        $unwind: '$servicePackage',
+      },
+      {
+        $match: {
+          'servicePackage.user': userId,
+        },
+      },
+
+      // {
+      //   $lookup: {
+      //     from: 'servicePackages',
+      //     localField: 'serviceId',
+      //     foreignField: '_id',
+      //     as: 'servicePackage',
+      //   },
+      // },
+      // {
+      //   $unwind: '$servicePackages',
+      // },
+      // {
+      //   $match: {
+      //     'servicePackages.user': userId,
+      //   },
+      // },
+    ]);
+    console.log(bookings);
+   response(res, 200, true,"get all bookings successfully", bookings);
+    
+  } catch (error) {
+    console.log(error);
+    return response(res, 500, false, 'Internal Server Error');
+    
   }
 };

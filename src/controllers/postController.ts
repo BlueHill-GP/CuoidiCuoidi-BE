@@ -6,28 +6,7 @@ import { deleteImage, uploadImage } from '../utils/imageUtils';
 
 // const router: Router = Router();
 
-const getPostsByUser = async (req: AuthenticatedRequest, res: Response) => {
-  try {
-    const page: any = req.query.page || 1; // Default to page 1 if no page parameter is provided
-    const pageSize = 1; // Number of posts per page
-    const startIndex = (page - 1) * pageSize;
-    const endIndex = startIndex + pageSize;
-    const posts = await Post.find({ user: req.userId })
-      .populate('user', ['username'])
-      .skip(startIndex)
-      .limit(pageSize);
-    res.status(200).json({
-      success: true,
-      posts,
-    });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({
-      success: false,
-      message: 'Internal server error',
-    });
-  }
-};
+
 const getPosts = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const page: any = req.query.page || 1; // Default to page 1 if no page parameter is provided
@@ -50,8 +29,30 @@ const getPosts = async (req: AuthenticatedRequest, res: Response) => {
     });
   }
 };
+// const getPostsByUser = async (req: AuthenticatedRequest, res: Response) => {
+//   try {
+//     const page: any = req.query.page || 1; // Default to page 1 if no page parameter is provided
+//     const pageSize = 1; // Number of posts per page
+//     const startIndex = (page - 1) * pageSize;
+//     const endIndex = startIndex + pageSize;
+//     const posts = await Post.find({ user: req.userId })
+//       .populate('user', ['username'])
+//       .skip(startIndex)
+//       .limit(pageSize);
+//     res.status(200).json({
+//       success: true,
+//       posts,
+//     });
+//   } catch (error) {
+//     console.log(error);
+//     return res.status(500).json({
+//       success: false,
+//       message: 'Internal server error',
+//     });
+//   }
+// };
 
-const getPostsByUserId = async (req: Request, res: Response) => {
+const getAllPostsByUserId = async (req: Request, res: Response) => {
   try {
     const userId = req.params.id;
     const page: any = req.query.page || 1; // Default to page 1 if no page parameter is provided
@@ -62,10 +63,8 @@ const getPostsByUserId = async (req: Request, res: Response) => {
       .populate('user', ['username'])
       .skip(startIndex)
       .limit(pageSize);
-    res.status(200).json({
-      success: true,
-      posts,
-    });
+    
+    response(res, 200, true, 'get posts successfully', posts);
   } catch (error) {
     console.log(error);
     return res.status(500).json({
@@ -179,4 +178,4 @@ const createPost = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-export { createPost, updatePost, deletePost, getPosts, getPostsByUserId };
+export { createPost, updatePost, deletePost, getPosts, getAllPostsByUserId };
