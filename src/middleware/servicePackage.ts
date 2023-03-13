@@ -2,6 +2,7 @@ import { NextFunction, Response } from 'express';
 import { AuthenticatedRequest } from '../interfaces/request';
 import ServicePackage from '../models/servicePackage';
 import { createResponse as response } from '../utils/responseUtils';
+import { ObjectId } from 'mongodb';
 
 export const verifyPackageService = async (
   req: AuthenticatedRequest,
@@ -10,7 +11,12 @@ export const verifyPackageService = async (
 ) => {
   try {
     const { serviceId } = req.body;
-    const servicePackage = await ServicePackage.findById(serviceId);
+    console.log(serviceId);
+    
+    if (!ObjectId.isValid(serviceId)) {
+      return response(res, 404, false, 'Package service not found 1');
+    }
+      const servicePackage = await ServicePackage.findById(serviceId);
     if (servicePackage) {
       next();
     } else {
@@ -21,3 +27,4 @@ export const verifyPackageService = async (
     return response(res, 500, false, 'Internal Server Error');
   }
 };
+

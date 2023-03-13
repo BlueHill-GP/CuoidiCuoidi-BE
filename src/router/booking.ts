@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import {
   createABooking,
+  getAllBookingByUser,
   updateBooking,
   updateBookingStatus,
 } from '../controllers/bookingController';
@@ -18,6 +19,9 @@ const router: Router = Router();
 //desc Creates a post
 //access private
 router.post('/', verifyPackageService, createABooking);
+
+router.get('/user/', verifyToken, getAllBookingByUser);
+;
 
 //@router PUT api/posts
 //desc update a post
