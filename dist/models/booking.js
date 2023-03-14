@@ -69,6 +69,10 @@ const BookingSchema = new mongoose_1.default.Schema({
         ref: 'servicePackages',
         required: true,
     },
+    owenService: {
+        type: mongoose_1.Schema.Types.ObjectId,
+        ref: 'user',
+    },
     paymentStatus: {
         type: Boolean,
         default: false,
@@ -77,6 +81,9 @@ const BookingSchema = new mongoose_1.default.Schema({
         type: String,
         default: '',
     },
+    bookingOrder: {
+        type: String,
+    },
     createAt: {
         type: Date,
         default: Date.now,
@@ -84,4 +91,60 @@ const BookingSchema = new mongoose_1.default.Schema({
 });
 const Booking = mongoose_1.default.model('bookings', BookingSchema);
 exports.default = Booking;
+// const BookingSchema: Schema = new mongoose.Schema({
+//   customerId: {
+//     type: String,
+//   },
+//   customerName: {
+//     type: String,
+//     required: true,
+//   },
+//   bookingStatus: {
+//     type: String,
+//     default: 'waiting',
+//   },
+//   serviceId: {
+//     type: Schema.Types.ObjectId,
+//     ref: 'servicePackages',
+//     required: true,
+//   },
+//   bookingOrder: {
+//     type: String,
+//   },
+//   createAt: {
+//     type: Date,
+//     default: Date.now,
+//   },
+// });
+// const Booking: Model<IBooking> = mongoose.model<IBooking>(
+//   'bookings',
+//   BookingSchema
+// );
+// const ServicePackageSchema: Schema = new mongoose.Schema({
+//   title: {
+//     type: String,
+//     required: true,
+//   },
+//   star: {
+//     type: Array<Object>,
+//     default: [],
+//   },
+//   user: {
+//     type: Schema.Types.ObjectId,
+//     ref: 'users',
+//     required: true,
+//   },
+//   price: {
+//     type: Number,
+//     required: true,
+//   },
+//   createAt: {
+//     type: Date,
+//     default: Date.now,
+//   },
+// });
+// const ServicePackage: Model<IServicePackage> = mongoose.model<IServicePackage>(
+//   'servicePackages',
+//   ServicePackageSchema
+// );
 //# sourceMappingURL=booking.js.map

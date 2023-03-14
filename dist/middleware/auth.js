@@ -3,11 +3,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.userGetBackOtp = exports.verifyOtp = exports.verifyToken = void 0;
+exports.verifyTypeUser = exports.userGetBackOtp = exports.verifyOtp = exports.verifyToken = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const OtpRedisRepository_1 = __importDefault(require("../repositories/OtpRedisRepository"));
 const responseUtils_1 = require("../utils/responseUtils");
 const userValidationSchema_1 = require("../validation/userValidationSchema");
+const User_1 = __importDefault(require("../models/User"));
 const verifyToken = (req, res, next) => {
     const authHeader = req.header('Authorization');
     const token = authHeader && authHeader.split(' ')[1];
@@ -71,4 +72,22 @@ const userGetBackOtp = async (req, res, next) => {
     }
 };
 exports.userGetBackOtp = userGetBackOtp;
+const verifyTypeUser = async (req, res, next) => {
+    try {
+        const user = await User_1.default.findById(req.userId);
+        if (user &&
+            (user.userType === 'photographer' || user.userType === 'makeup')) {
+            next();
+        }
+        else {
+            (0, responseUtils_1.createResponse)(res, 400, false, 'You are not our partner');
+        }
+        ;
+    }
+    catch (error) {
+        console.log(error);
+        return (0, responseUtils_1.createResponse)(res, 500, false, 'Internal server error');
+    }
+};
+exports.verifyTypeUser = verifyTypeUser;
 //# sourceMappingURL=auth.js.map

@@ -3,15 +3,45 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getServicePackages = exports.deleteServicePackage = exports.updateServicePackage = exports.createServicePackage = void 0;
+exports.getAllServicePackagesById = exports.getAllServicePackagesByUserId = exports.deleteServicePackage = exports.updateServicePackage = exports.createServicePackage = void 0;
 const responseUtils_1 = require("../utils/responseUtils");
 const imageUtils_1 = require("../utils/imageUtils");
 const servicePackage_1 = __importDefault(require("../models/servicePackage"));
-const getServicePackages = async (req, res) => {
+// const getServicePackages = async (req: AuthenticatedRequest, res: Response) => {
+//   try {
+//     const servicePackages = await ServicePackage.find({
+//       user: req.userId,
+//     }).populate('user', ['username']);
+//     response(
+//       res,
+//       200,
+//       true,
+//       'Get service packages successfully',
+//       servicePackages
+//     );
+//   } catch (error) {
+//     console.log(error);
+//     return response(res, 500, false, 'Internal Server Error');
+//   }
+// };
+const getAllServicePackagesByUserId = async (req, res) => {
     try {
         const servicePackages = await servicePackage_1.default.find({
-            user: req.userId,
+            user: req.params.id,
         }).populate('user', ['username']);
+        (0, responseUtils_1.createResponse)(res, 200, true, 'Get service packages successfully 1', servicePackages);
+    }
+    catch (error) {
+        console.log(error);
+        return (0, responseUtils_1.createResponse)(res, 500, false, 'Internal Server Error');
+    }
+};
+exports.getAllServicePackagesByUserId = getAllServicePackagesByUserId;
+const getAllServicePackagesById = async (req, res) => {
+    try {
+        console.log(req.params.id);
+        const servicePackages = await servicePackage_1.default.findById(req.params.id)
+            .populate('user', ['username']);
         (0, responseUtils_1.createResponse)(res, 200, true, 'Get service packages successfully', servicePackages);
     }
     catch (error) {
@@ -19,7 +49,7 @@ const getServicePackages = async (req, res) => {
         return (0, responseUtils_1.createResponse)(res, 500, false, 'Internal Server Error');
     }
 };
-exports.getServicePackages = getServicePackages;
+exports.getAllServicePackagesById = getAllServicePackagesById;
 const deleteServicePackage = async (req, res) => {
     try {
         const postUpdateCondition = { _id: req.params.id, user: req.userId };
@@ -68,8 +98,6 @@ const updateServicePackage = async (req, res) => {
 exports.updateServicePackage = updateServicePackage;
 const createServicePackage = async (req, res) => {
     const { title, description, price } = req.body;
-    const userIP = req.socket.remoteAddress;
-    console.log('userIb: 34234: ', userIP);
     const files = Array.isArray(req.files.images)
         ? req.files.images
         : [req.files.images];

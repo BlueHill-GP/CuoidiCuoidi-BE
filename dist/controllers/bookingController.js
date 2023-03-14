@@ -3,12 +3,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateBookingStatus = exports.updateBooking = exports.createABooking = void 0;
+exports.getAllBookingByUser = exports.updateBookingStatus = exports.updateBooking = exports.createABooking = void 0;
 const booking_1 = __importDefault(require("../models/booking"));
 const servicePackage_1 = __importDefault(require("../models/servicePackage"));
 const responseUtils_1 = require("../utils/responseUtils");
+const BookingRedisRepository_1 = __importDefault(require("../repositories/BookingRedisRepository"));
 const createABooking = async (req, res) => {
-    const { customerId, customerName, customerAddress, customerPhone, customerEmail, customerGender, customerAge, bookingTime, bookingAddress, bookingStatus, serviceId, paymentStatus, notes, } = req.body;
+    const { customerId, customerName, customerAddress, customerPhone, customerEmail, customerGender, customerAge, bookingTime, bookingAddress, bookingStatus, serviceId, owenService, paymentStatus, notes, } = req.body;
     try {
         const newBooking = new booking_1.default({
             customerId,
@@ -22,11 +23,14 @@ const createABooking = async (req, res) => {
             bookingAddress,
             bookingStatus,
             serviceId,
+            owenService,
             paymentStatus,
             notes,
         });
-        await newBooking.save();
-        (0, responseUtils_1.createResponse)(res, 201, true, 'Booking created successfully', newBooking);
+        BookingRedisRepository_1.default.set(newBooking);
+        console.log('create:', newBooking);
+        // await newBooking.save();
+        (0, responseUtils_1.createResponse)(res, 201, true, 'Booking created successfully', newBooking._id);
     }
     catch (error) {
         console.log(error);
@@ -37,6 +41,7 @@ exports.createABooking = createABooking;
 const updateBooking = async (req, res) => {
     try {
         const bookingId = req.params.id;
+        console.log(bookingId);
         const oldBooking = await booking_1.default.findById(bookingId);
         if (!oldBooking) {
             return (0, responseUtils_1.createResponse)(res, 404, false, 'Booking not found');
@@ -83,4 +88,64 @@ const updateBookingStatus = async (req, res) => {
     }
 };
 exports.updateBookingStatus = updateBookingStatus;
+const getAllBookingByUser = async (req, res) => {
+    const { userId } = req;
+    try {
+        // const bookings = await Booking.aggregate([
+        // {
+        //   $lookup: {
+        //     from: 'servicePackages',
+        //     localField: 'serviceId',
+        //     foreignField: '_id',
+        //     as: 'servicePackages',
+        //   },
+        // },
+        // {
+        //   $unwind: '$servicePackages',
+        // },
+        // {
+        //   $match: {
+        //     'servicePackages.user': userId,
+        //   },
+        // },
+        // {
+        //   $lookup: {
+        //     from: 'servicePackages',
+        //     localField: 'servicePackageId',
+        //     foreignField: '_id',
+        //     as: 'servicePackages',
+        //   },
+        // },
+        // {
+        //   $match: {
+        //     'servicePackage.user': userId,
+        //   },
+        // },
+        //   {
+        //     $lookup: {
+        //       from: 'servicePackages',
+        //       localField: 'serviceId',
+        //       foreignField: '_id',
+        //       as: 'servicePackage',
+        //     },
+        //   },
+        //   {
+        //     $unwind: '$servicePackage',
+        //   },
+        //   {
+        //     $match: {
+        //       'servicePackage.user': userId,
+        //     },
+        //   },
+        // ]);
+        const bookings = await booking_1.default.find({ owenService: userId });
+        console.log(bookings);
+        (0, responseUtils_1.createResponse)(res, 200, true, 'get all bookings successfully', bookings);
+    }
+    catch (error) {
+        console.log(error);
+        return (0, responseUtils_1.createResponse)(res, 500, false, 'Internal Server Error');
+    }
+};
+exports.getAllBookingByUser = getAllBookingByUser;
 //# sourceMappingURL=bookingController.js.map

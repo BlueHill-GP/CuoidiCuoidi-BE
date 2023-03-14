@@ -11,9 +11,10 @@ export interface IBooking extends Document {
 
   bookingTime: Date;
   bookingStatus: string;
-  bookingOrder:string;
+  bookingOrder: string;
   bookingAddress: string;
   serviceId: string;
+  owenService: string;
   paymentStatus: boolean;
   notes?: string;
   createAt?: Date;

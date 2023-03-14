@@ -10,11 +10,11 @@ const router = (0, express_1.Router)();
 //desc get posts
 //access private
 router.get('/', postController_1.getPosts);
-router.get('/:id', postController_1.getPostsByUserId);
+router.get('/:id', postController_1.getAllPostsByUserId);
 //@router POST api/posts
 //desc Creates a post
 //access private
-router.post('/', auth_1.verifyToken, validation_1.checkImage, postController_1.createPost);
+router.post('/', auth_1.verifyToken, auth_1.verifyTypeUser, validation_1.checkImage, postController_1.createPost);
 //@router PUT api/posts
 //desc update a post
 //access private

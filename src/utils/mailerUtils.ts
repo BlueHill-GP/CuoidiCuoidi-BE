@@ -13,3 +13,4 @@ export async function sendMail(to: string, subject: string, text: string) {
 
   return transporter.sendMail(mailOptions);
 }
+

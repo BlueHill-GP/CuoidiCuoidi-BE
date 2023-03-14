@@ -14,7 +14,7 @@ const router: Router = Router();
 //@router GET api/posts
 //desc get posts
 //access private
-router.get('/user/:id', getAllServicePackagesByUserId);
+router.get('/user/:id',verifyToken,  getAllServicePackagesByUserId);
 
 router.get('/id/:id', getAllServicePackagesById);
 

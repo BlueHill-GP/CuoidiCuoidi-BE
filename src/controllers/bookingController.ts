@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
 import { IBooking } from '../interfaces/module';
-import { AuthenticatedRequest } from '../interfaces/request';
+import { AuthenticatedRequest, bookingRequest } from '../interfaces/request';
 import Booking from '../models/booking';
 import ServicePackage from '../models/servicePackage';
 import { createResponse as response } from '../utils/responseUtils';
 import BookingRedis from '../repositories/BookingRedisRepository';
 
-export const createABooking = async (req: Request, res: Response) => {
+export const createABooking = async (req: bookingRequest, res: Response) => {
   const {
     customerId,
     customerName,
@@ -19,6 +19,7 @@ export const createABooking = async (req: Request, res: Response) => {
     bookingAddress,
     bookingStatus,
     serviceId,
+    owenService,
     paymentStatus,
     notes,
   } = req.body;
@@ -35,11 +36,14 @@ export const createABooking = async (req: Request, res: Response) => {
       bookingAddress,
       bookingStatus,
       serviceId,
+      owenService,
       paymentStatus,
       notes,
     });
 
     BookingRedis.set(newBooking);
+    console.log('create:', newBooking);
+
     // await newBooking.save();
     response(res, 201, true, 'Booking created successfully', newBooking._id);
   } catch (error) {
@@ -128,63 +132,61 @@ export const getAllBookingByUser = async (
   req: AuthenticatedRequest,
   res: Response
 ) => {
-  const { userId } = req.body;
+  const { userId } = req;
   try {
-    const bookings = await Booking.aggregate([
-      // {
-      //   $lookup: {
-      //     from: 'servicePackages',
-      //     localField: 'servicePackageId',
-      //     foreignField: '_id',
-      //     as: 'servicePackages',
-      //   },
-      // },
-      // {
-      //   $match: {
-      //     'servicePackage.user': userId,
-      //   },
-      // },
+    // const bookings = await Booking.aggregate([
+    // {
+    //   $lookup: {
+    //     from: 'servicePackages',
+    //     localField: 'serviceId',
+    //     foreignField: '_id',
+    //     as: 'servicePackages',
+    //   },
+    // },
+    // {
+    //   $unwind: '$servicePackages',
+    // },
+    // {
+    //   $match: {
+    //     'servicePackages.user': userId,
+    //   },
+    // },
+    // {
+    //   $lookup: {
+    //     from: 'servicePackages',
+    //     localField: 'servicePackageId',
+    //     foreignField: '_id',
+    //     as: 'servicePackages',
+    //   },
+    // },
+    // {
+    //   $match: {
+    //     'servicePackage.user': userId,
+    //   },
+    // },
 
-      {
-        $lookup: {
-          from: 'servicePackages',
-          localField: 'serviceId',
-          foreignField: '_id',
-          as: 'servicePackage',
-        },
-      },
-      {
-        $unwind: '$servicePackage',
-      },
-      {
-        $match: {
-          'servicePackage.user': userId,
-        },
-      },
-
-      // {
-      //   $lookup: {
-      //     from: 'servicePackages',
-      //     localField: 'serviceId',
-      //     foreignField: '_id',
-      //     as: 'servicePackage',
-      //   },
-      // },
-      // {
-      //   $unwind: '$servicePackages',
-      // },
-      // {
-      //   $match: {
-      //     'servicePackages.user': userId,
-      //   },
-      // },
-    ]);
+    //   {
+    //     $lookup: {
+    //       from: 'servicePackages',
+    //       localField: 'serviceId',
+    //       foreignField: '_id',
+    //       as: 'servicePackage',
+    //     },
+    //   },
+    //   {
+    //     $unwind: '$servicePackage',
+    //   },
+    //   {
+    //     $match: {
+    //       'servicePackage.user': userId,
+    //     },
+    //   },
+    // ]);
+    const bookings = await Booking.find({ owenService: userId });
     console.log(bookings);
-   response(res, 200, true,"get all bookings successfully", bookings);
-    
+    response(res, 200, true, 'get all bookings successfully', bookings);
   } catch (error) {
     console.log(error);
     return response(res, 500, false, 'Internal Server Error');
-    
   }
 };
