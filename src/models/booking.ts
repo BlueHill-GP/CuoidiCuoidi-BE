@@ -46,6 +46,10 @@ const BookingSchema: Schema = new mongoose.Schema({
     ref: 'servicePackages',
     required: true,
   },
+  owenService: {
+    type: Schema.Types.ObjectId,
+    ref: 'user',
+  },
   paymentStatus: {
     type: Boolean,
     default: false,

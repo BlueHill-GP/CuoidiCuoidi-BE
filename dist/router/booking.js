@@ -13,6 +13,8 @@ const router = (0, express_1.Router)();
 //desc Creates a post
 //access private
 router.post('/', servicePackage_1.verifyPackageService, bookingController_1.createABooking);
+router.get('/user/', auth_1.verifyToken, bookingController_1.getAllBookingByUser);
+;
 //@router PUT api/posts
 //desc update a post
 //access private

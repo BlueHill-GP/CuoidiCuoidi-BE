@@ -5,6 +5,7 @@ import BookingRedis from '../repositories/BookingRedisRepository';
 import { createResponse as response } from '../utils/responseUtils';
 import Booking from '../models/booking';
 import { IBooking } from '../interfaces/module';
+import { mailPaymentSuccessful } from '../utils/mailUtils';
 
 const viewPaySuccess = `
 <!DOCTYPE html>
@@ -38,35 +39,6 @@ function sortObject(obj) {
   return sorted;
 }
 
-// export const payment = async (req, res) => {
-//   const queryParams = querystring.parse(req.url.split('?')[1]);
-
-//   // Create a new Payment instance with the extracted data
-//   const payment = new Payment({
-//     vnpAmount: queryParams['vnp_Amount'],
-//     vnpBankCode: queryParams['vnp_BankCode'],
-//     vnpBankTranNo: queryParams['vnp_BankTranNo'],
-//     vnpCardType: queryParams['vnp_CardType'],
-//     vnpOrderInfo: queryParams['vnp_OrderInfo'],
-//     vnpPayDate: queryParams['vnp_PayDate'],
-//     vnpResponseCode: queryParams['vnp_ResponseCode'],
-//     vnpTmnCode: queryParams['vnp_TmnCode'],
-//     vnpTransactionNo: queryParams['vnp_TransactionNo'],
-//     vnpTransactionStatus: queryParams['vnp_TransactionStatus'],
-//     vnpTxnRef: queryParams['vnp_TxnRef'],
-//     vnpSecureHash: queryParams['vnp_SecureHash'],
-//   });
-
-//   // Save the payment data to the database
-//   try {
-//     await payment.save();
-//     res.send('Payment saved to database');
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).send('Error saving payment to database');
-//   }
-// };
-
 export const handleVnPayIPN =  async(
   req: Request,
   res: Response,
@@ -91,13 +63,12 @@ export const handleVnPayIPN =  async(
       BookingRedis.get(orderId, (err, reply) => {
         const booking: IBooking = JSON.parse(reply);
         try {
-          console.log(booking);
-          
           booking.paymentStatus = true
           booking.bookingOrder = orderId
           delete booking._id;
           const newBooking = new Booking(booking);
           // gail notifications
+          mailPaymentSuccessful(newBooking.serviceId, newBooking.customerEmail);
           newBooking.save();
          res.send(viewPaySuccess);
         } catch (error) {

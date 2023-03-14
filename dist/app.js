@@ -15,6 +15,7 @@ const post_1 = __importDefault(require("./router/post"));
 const servicePackage_1 = __importDefault(require("./router/servicePackage"));
 const booking_1 = __importDefault(require("./router/booking"));
 const user_1 = __importDefault(require("./router/user"));
+const payment_1 = __importDefault(require("./router/payment"));
 mongoose_1.default.set('strictQuery', false);
 (0, db_1.default)();
 const app = (0, express_1.default)();
@@ -32,6 +33,7 @@ app.use('/api/posts', post_1.default);
 app.use('/api/service-packages', servicePackage_1.default);
 app.use('/api/booking', booking_1.default);
 app.use('/api/user', user_1.default);
+app.use('/api/payment', payment_1.default);
 app.listen(PORT, () => {
     console.log('love u');
     return console.log(`Express is listening at http://localhost:${PORT}`);

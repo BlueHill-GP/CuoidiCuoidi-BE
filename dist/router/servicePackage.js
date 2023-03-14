@@ -8,11 +8,12 @@ const router = (0, express_1.Router)();
 //@router GET api/posts
 //desc get posts
 //access private
-router.get('/', auth_1.verifyToken, servicePackageController_1.getServicePackages);
+router.get('/user/:id', auth_1.verifyToken, servicePackageController_1.getAllServicePackagesByUserId);
+router.get('/id/:id', servicePackageController_1.getAllServicePackagesById);
 //@router POST api/posts
 //desc Creates a post
 //access private
-router.post('/', auth_1.verifyToken, validation_1.checkImage, servicePackageController_1.createServicePackage);
+router.post('/', auth_1.verifyToken, auth_1.verifyTypeUser, validation_1.checkImage, servicePackageController_1.createServicePackage);
 //@router PUT api/posts
 //desc update a post
 //access private
