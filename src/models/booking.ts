@@ -39,6 +39,7 @@ const BookingSchema: Schema = new mongoose.Schema({
   },
   bookingStatus: {
     type: String,
+    enum: ['waiting', 'accepted', 'rejected'],
     default: 'waiting',
   },
   serviceId: {

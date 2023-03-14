@@ -5,6 +5,7 @@ import Booking from '../models/booking';
 import ServicePackage from '../models/servicePackage';
 import { createResponse as response } from '../utils/responseUtils';
 import BookingRedis from '../repositories/BookingRedisRepository';
+import { mailUpdateBookingStatus } from '../utils/mailUtils';
 
 export const createABooking = async (req: bookingRequest, res: Response) => {
   const {
@@ -98,7 +99,9 @@ export const updateBookingStatus = async (
   try {
     const bookingId = req.params.id;
     const user = req.userId;
-    const newBookingStatus = req.body.bookingStatus;
+    const newBookingStatus = { bookingStatus: req.body.bookingStatus };
+
+    console.log('newBookingStatus', newBookingStatus);
 
     const booking = await Booking.findById(bookingId);
     const servicePackage = await ServicePackage.findById(booking.serviceId);
@@ -108,7 +111,6 @@ export const updateBookingStatus = async (
     }
     const condition = {
       _id: bookingId,
-      servicePackageId: servicePackage._id.toString(),
     };
 
     const updateBooking = await Booking.findOneAndUpdate(
@@ -119,9 +121,12 @@ export const updateBookingStatus = async (
       }
     );
 
-    console.log(updateBooking);
+    if (!updateBooking) {
+      return response(res, 404, false, 'updateBooking failed');
+    }
 
     response(res, 200, true, 'Booking updated successfully', updateBooking);
+    mailUpdateBookingStatus(updateBooking);
   } catch (error) {
     console.log(error);
     return response(res, 500, false, 'Internal Server Error');

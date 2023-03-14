@@ -1,3 +1,4 @@
+import { IBooking } from '../interfaces/module';
 import ServicePackage from '../models/servicePackage';
 import { sendMail } from './mailerUtils';
 
@@ -17,3 +18,14 @@ export const mailPaymentSuccessful = async (serviceId: string, email: string) =>
     
   }
 };
+
+export const mailUpdateBookingStatus = async (booking: IBooking) => {
+  let message = ``
+  if (booking.bookingStatus === 'accepted') {
+    message='Accepted'
+  } else {
+    message = 'Rejected';
+    
+   }
+  sendMail(booking.customerEmail, `Cuoidi Cuoidi`, message);
+}
