@@ -10,7 +10,7 @@ export interface IBooking extends Document {
   customerAge: number;
 
   bookingTime: Date;
-  bookingStatus: string;
+  bookingStatus: 'waiting'| 'accepted'| 'rejected';
   bookingOrder: string;
   bookingAddress: string;
   serviceId: string;

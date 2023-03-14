@@ -27,7 +27,7 @@ router.get('/user/', verifyToken, getAllBookingByUser);
 //desc update a post
 //access private
 // router.put('/:id', updateBooking);
-router.put('/:id', verifyToken, verifyPackageService, updateBookingStatus);
+router.put('/:id', verifyToken, updateBookingStatus);
 
 //@router DELETE api/posts
 //desc delete a post
