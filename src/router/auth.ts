@@ -18,6 +18,12 @@ const router = express.Router();
 // @router POST api/user/register
 // @desc Register user
 // @access Public
+
+
+// http://localhost:3000/api/auth/
+// http://localhost:3000/api/booking;
+
+
 router.post('/register', userRegisterValidation, register);
 
 router.post('/register/resend-OTP', userGetBackOtp, resendOtp);

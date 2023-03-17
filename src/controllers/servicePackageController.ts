@@ -146,7 +146,7 @@ const createServicePackage = async (
   req: AuthenticatedRequest,
   res: Response
 ) => {
-  const { title, description, price } = req.body;
+  const { title, description, price,location } = req.body;
 
   const files = Array.isArray(req.files.images)
     ? req.files.images
@@ -166,6 +166,7 @@ const createServicePackage = async (
       description: description,
       price: price,
       image: results,
+      location: location,
       user: req.userId,
     });
     await newServicePackage.save();
@@ -180,10 +181,48 @@ const createServicePackage = async (
   }
 };
 
+const getRandomServicePackage = async (req: Request, res: Response) => {
+  try {
+    // const servicePackages = await ServicePackage.aggregate([
+    //   { $sample: { size: 5 } },
+    // ]).populate('user', ['username']);
+    const servicePackages = await ServicePackage.aggregate([
+      { $sample: { size: 5 } },
+    ]).exec();
+
+    await ServicePackage.populate(servicePackages, {
+      path: 'user',
+      select: 'username',
+    });
+    response(res, 200, true, 'ok', servicePackages);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+}
+  
+const getServicePackagesByFilter = async (req: Request, res: Response) => { 
+  const { filter } = req.body
+  console.log(filter);
+  
+
+    try {
+      // Find all the service packages with the given location
+      const servicePackages = await ServicePackage.find({ location: filter.selectedLocation });
+
+      // Return the filtered service packages
+      res.json(servicePackages);
+    } catch (error) {
+      console.error(error.message);
+      res.status(500).send('Server Error');
+    }
+}
+
 export {
   createServicePackage,
   updateServicePackage,
   deleteServicePackage,
   getAllServicePackagesByUserId,
   getAllServicePackagesById,
+  getRandomServicePackage,
+  getServicePackagesByFilter,
 };

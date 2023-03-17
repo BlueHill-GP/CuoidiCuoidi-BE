@@ -10,6 +10,8 @@ const router = (0, express_1.Router)();
 //access private
 router.get('/user/:id', auth_1.verifyToken, servicePackageController_1.getAllServicePackagesByUserId);
 router.get('/id/:id', servicePackageController_1.getAllServicePackagesById);
+router.get('/random', servicePackageController_1.getRandomServicePackage);
+router.post('/filter', servicePackageController_1.getServicePackagesByFilter);
 //@router POST api/posts
 //desc Creates a post
 //access private

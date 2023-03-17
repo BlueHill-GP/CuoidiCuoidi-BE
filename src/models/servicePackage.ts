@@ -7,6 +7,7 @@ export interface IServicePackage extends Document {
   star?: Array<Object>;
   user: string;
   price: number;
+  location: string;
   createAt?: Date;
 }
 
@@ -34,6 +35,10 @@ const ServicePackageSchema: Schema = new mongoose.Schema({
   },
   price: {
     type: Number,
+    required: true,
+  },
+  location: {
+    type: String,
     required: true,
   },
   createAt: {

@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAllServicePackagesById = exports.getAllServicePackagesByUserId = exports.deleteServicePackage = exports.updateServicePackage = exports.createServicePackage = void 0;
+exports.getServicePackagesByFilter = exports.getRandomServicePackage = exports.getAllServicePackagesById = exports.getAllServicePackagesByUserId = exports.deleteServicePackage = exports.updateServicePackage = exports.createServicePackage = void 0;
 const responseUtils_1 = require("../utils/responseUtils");
 const imageUtils_1 = require("../utils/imageUtils");
 const servicePackage_1 = __importDefault(require("../models/servicePackage"));
@@ -97,7 +97,7 @@ const updateServicePackage = async (req, res) => {
 };
 exports.updateServicePackage = updateServicePackage;
 const createServicePackage = async (req, res) => {
-    const { title, description, price } = req.body;
+    const { title, description, price, location } = req.body;
     const files = Array.isArray(req.files.images)
         ? req.files.images
         : [req.files.images];
@@ -112,6 +112,7 @@ const createServicePackage = async (req, res) => {
             description: description,
             price: price,
             image: results,
+            location: location,
             user: req.userId,
         });
         await newServicePackage.save();
@@ -127,4 +128,38 @@ const createServicePackage = async (req, res) => {
     }
 };
 exports.createServicePackage = createServicePackage;
+const getRandomServicePackage = async (req, res) => {
+    try {
+        // const servicePackages = await ServicePackage.aggregate([
+        //   { $sample: { size: 5 } },
+        // ]).populate('user', ['username']);
+        const servicePackages = await servicePackage_1.default.aggregate([
+            { $sample: { size: 5 } },
+        ]).exec();
+        await servicePackage_1.default.populate(servicePackages, {
+            path: 'user',
+            select: 'username',
+        });
+        (0, responseUtils_1.createResponse)(res, 200, true, 'ok', servicePackages);
+    }
+    catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};
+exports.getRandomServicePackage = getRandomServicePackage;
+const getServicePackagesByFilter = async (req, res) => {
+    const { filter } = req.body;
+    console.log(filter);
+    try {
+        // Find all the service packages with the given location
+        const servicePackages = await servicePackage_1.default.find({ location: filter.selectedLocation });
+        // Return the filtered service packages
+        res.json(servicePackages);
+    }
+    catch (error) {
+        console.error(error.message);
+        res.status(500).send('Server Error');
+    }
+};
+exports.getServicePackagesByFilter = getServicePackagesByFilter;
 //# sourceMappingURL=servicePackageController.js.map

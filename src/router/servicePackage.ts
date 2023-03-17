@@ -4,6 +4,8 @@ import {
   deleteServicePackage,
   getAllServicePackagesById,
   getAllServicePackagesByUserId,
+  getRandomServicePackage,
+  getServicePackagesByFilter,
   updateServicePackage,
 } from '../controllers/servicePackageController';
 import { verifyToken, verifyTypeUser } from '../middleware/auth';
@@ -17,6 +19,10 @@ const router: Router = Router();
 router.get('/user/:id',verifyToken,  getAllServicePackagesByUserId);
 
 router.get('/id/:id', getAllServicePackagesById);
+
+router.get('/random', getRandomServicePackage);
+
+router.post('/filter', getServicePackagesByFilter);
 
 //@router POST api/posts
 //desc Creates a post
