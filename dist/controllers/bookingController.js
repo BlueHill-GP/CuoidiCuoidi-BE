@@ -8,6 +8,7 @@ const booking_1 = __importDefault(require("../models/booking"));
 const servicePackage_1 = __importDefault(require("../models/servicePackage"));
 const responseUtils_1 = require("../utils/responseUtils");
 const BookingRedisRepository_1 = __importDefault(require("../repositories/BookingRedisRepository"));
+const mailUtils_1 = require("../utils/mailUtils");
 const createABooking = async (req, res) => {
     const { customerId, customerName, customerAddress, customerPhone, customerEmail, customerGender, customerAge, bookingTime, bookingAddress, bookingStatus, serviceId, owenService, paymentStatus, notes, } = req.body;
     try {
@@ -66,7 +67,8 @@ const updateBookingStatus = async (req, res) => {
     try {
         const bookingId = req.params.id;
         const user = req.userId;
-        const newBookingStatus = req.body.bookingStatus;
+        const newBookingStatus = { bookingStatus: req.body.bookingStatus };
+        console.log('newBookingStatus', newBookingStatus);
         const booking = await booking_1.default.findById(bookingId);
         const servicePackage = await servicePackage_1.default.findById(booking.serviceId);
         if (user !== servicePackage.user.toString()) {
@@ -74,13 +76,15 @@ const updateBookingStatus = async (req, res) => {
         }
         const condition = {
             _id: bookingId,
-            servicePackageId: servicePackage._id.toString(),
         };
         const updateBooking = await booking_1.default.findOneAndUpdate(condition, newBookingStatus, {
             new: true,
         });
-        console.log(updateBooking);
+        if (!updateBooking) {
+            return (0, responseUtils_1.createResponse)(res, 404, false, 'updateBooking failed');
+        }
         (0, responseUtils_1.createResponse)(res, 200, true, 'Booking updated successfully', updateBooking);
+        (0, mailUtils_1.mailUpdateBookingStatus)(updateBooking);
     }
     catch (error) {
         console.log(error);

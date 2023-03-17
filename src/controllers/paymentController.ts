@@ -70,6 +70,7 @@ export const handleVnPayIPN =  async(
           // gail notifications
           mailPaymentSuccessful(newBooking.serviceId, newBooking.customerEmail);
           newBooking.save();
+          
          res.send(viewPaySuccess);
         } catch (error) {
           console.log(error);

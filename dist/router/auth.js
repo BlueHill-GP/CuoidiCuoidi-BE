@@ -12,6 +12,8 @@ const router = express_1.default.Router();
 // @router POST api/user/register
 // @desc Register user
 // @access Public
+// http://localhost:3000/api/auth/
+// http://localhost:3000/api/booking;
 router.post('/register', validation_1.userRegisterValidation, authController_1.register);
 router.post('/register/resend-OTP', auth_1.userGetBackOtp, authController_1.resendOtp);
 router.post('/register/otp', auth_1.verifyOtp, authController_1.verifyRegister);

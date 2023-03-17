@@ -19,7 +19,7 @@ router.get('/user/', auth_1.verifyToken, bookingController_1.getAllBookingByUser
 //desc update a post
 //access private
 // router.put('/:id', updateBooking);
-router.put('/:id', auth_1.verifyToken, servicePackage_1.verifyPackageService, bookingController_1.updateBookingStatus);
+router.put('/:id', auth_1.verifyToken, bookingController_1.updateBookingStatus);
 //@router DELETE api/posts
 //desc delete a post
 //access private

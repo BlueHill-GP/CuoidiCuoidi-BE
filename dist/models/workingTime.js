@@ -24,41 +24,25 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
-const ServicePackageSchema = new mongoose_1.default.Schema({
-    title: {
-        type: String,
-        required: true,
-    },
-    description: {
-        type: String,
-        required: true,
-    },
-    image: {
-        type: (Array),
-        required: true,
-    },
-    star: {
-        type: (Array),
-        default: [],
-    },
-    user: {
+const workingTimeSchema = new mongoose_1.default.Schema({
+    userId: {
         type: mongoose_1.Schema.Types.ObjectId,
-        ref: 'users',
+        ref: 'user',
+    },
+    serviceId: {
+        type: mongoose_1.Schema.Types.ObjectId,
+        ref: 'servicePackages',
         required: true,
     },
-    price: {
-        type: Number,
-        required: true,
-    },
-    location: {
+    time: {
         type: String,
-        required: true,
+        default: false,
     },
     createAt: {
         type: Date,
         default: Date.now,
     },
 });
-const ServicePackage = mongoose_1.default.model('servicePackages', ServicePackageSchema);
-exports.default = ServicePackage;
-//# sourceMappingURL=servicePackage.js.map
+const WorkingTime = mongoose_1.default.model('workingTimes', workingTimeSchema);
+exports.default = WorkingTime;
+//# sourceMappingURL=workingTime.js.map
