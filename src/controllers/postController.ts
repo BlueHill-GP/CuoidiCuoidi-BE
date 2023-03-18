@@ -1,12 +1,15 @@
 import { Router, Request, Response } from 'express';
 import { AuthenticatedRequest } from '../interfaces/request';
-import Post, { IPost } from '../models/Post';
+import Post, { IPost, LikeData } from '../models/Post';
 import { createResponse as response } from '../utils/responseUtils';
 import { deleteImage, uploadImage } from '../utils/imageUtils';
+import User from '../models/User';
 
 // const router: Router = Router();
 
-
+interface PostSocket extends IPost {
+  username?: string;
+}
 const getPosts = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const page: any = req.query.page || 1; // Default to page 1 if no page parameter is provided
@@ -59,11 +62,12 @@ const getAllPostsByUserId = async (req: Request, res: Response) => {
     const pageSize = 10; // Number of posts per page
     const startIndex = (page - 1) * pageSize;
     const endIndex = startIndex + pageSize;
-    const posts = await Post.find({ user: userId })
-      .populate('user', ['username'])
-      .skip(startIndex)
-      .limit(pageSize);
-    
+    const posts = await Post.find({ user: userId }).populate('user', [
+      'username',
+    ]);
+    // .skip(startIndex)
+    // .limit(pageSize);
+
     response(res, 200, true, 'get posts successfully', posts);
   } catch (error) {
     console.log(error);
@@ -162,15 +166,35 @@ const createPost = async (req: AuthenticatedRequest, res: Response) => {
     console.log('log id: ', req.userId);
 
     const newPost: IPost = new Post({
-      description,
+      description: req.body.description,
       image: results,
       user: req.userId,
     });
     await newPost.save();
+    const { _id, description, image, like, user: userId, createAt } = newPost;
+    const userData = await User.findById(req.userId);
+    const { username, userType, email, avatar } = userData;
+
+    const postData = {
+      _id,
+      username,
+      userType,
+      email,
+      avatar,
+      description,
+      image,
+      like,
+      user: userId,
+      createAt,
+    };
+
+    // .populate('user', ['username']);
+    global._io.emit('new-post', postData);
+
     return res.status(200).json({
       success: true,
       message: 'Post created successfully',
-      post: newPost,
+      post: postData,
     });
   } catch (error) {
     console.log(error);
@@ -178,4 +202,57 @@ const createPost = async (req: AuthenticatedRequest, res: Response) => {
   }
 };
 
-export { createPost, updatePost, deletePost, getPosts, getAllPostsByUserId };
+const handleLikePost = async (req: AuthenticatedRequest, res: Response) => {
+
+  try {
+      const postId = req.params.id;
+      console.log(postId);
+
+      const userId = req.userId;
+      const post = await Post.findById(postId);
+
+      console.log('post: ', post);
+      console.log('post: ', post.like);
+
+      // const newLike: LikeData = post.like;
+
+      // if (!newLike[userId]) {
+      //   newLike[userId] = true;
+      // } else {
+        
+      // }
+    const newLike = toggleLike(post.like, userId);
+    
+    
+      const newPost = await Post.findByIdAndUpdate(
+        postId,
+        { like: newLike },
+        { new: true }
+      );
+
+      response(res, 200, true, 'like', newPost);
+  } catch (error) {
+    console.log(error);
+    return response(res, 500, false,'internal server error');
+    
+  }
+  
+};
+
+const  toggleLike = (likeObj: LikeData, user: string) => {
+  if (user in likeObj) {
+    likeObj[user] = !likeObj[user];
+  } else {
+    likeObj[user] = true;
+  }
+  return likeObj;
+}
+
+export {
+  createPost,
+  updatePost,
+  deletePost,
+  getPosts,
+  getAllPostsByUserId,
+  handleLikePost,
+};

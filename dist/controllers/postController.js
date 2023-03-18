@@ -7,6 +7,7 @@ exports.getAllPostsByUserId = exports.getPosts = exports.deletePost = exports.up
 const Post_1 = __importDefault(require("../models/Post"));
 const responseUtils_1 = require("../utils/responseUtils");
 const imageUtils_1 = require("../utils/imageUtils");
+const User_1 = __importDefault(require("../models/User"));
 // const router: Router = Router();
 const getPosts = async (req, res) => {
     try {
@@ -158,7 +159,10 @@ const createPost = async (req, res) => {
             image: results,
             user: req.userId,
         });
+        const user = await User_1.default.findById(req.userId);
         await newPost.save();
+        newPost.userName = user.username;
+        global._io.emit('new-post', newPost);
         return res.status(200).json({
             success: true,
             message: 'Post created successfully',

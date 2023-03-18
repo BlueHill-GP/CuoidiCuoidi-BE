@@ -1,4 +1,21 @@
-export default interface UserSocket {
-  userId: string;
+import mongoose, { Model, Schema } from "mongoose";
+
+export  interface IUserSocket {
+
   userSocketId: string;
 }
+
+const UserSocketScheme: Schema = new mongoose.Schema({
+
+  userSocketId: {
+    type: String,
+    required: true,
+  }
+});
+
+const UserSocket: Model<IUserSocket> = mongoose.model<IUserSocket>(
+  'userSockets',
+  UserSocketScheme
+);
+
+export default UserSocket;

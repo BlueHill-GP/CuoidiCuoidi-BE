@@ -5,6 +5,7 @@ export interface IUser extends Document {
   password: string;
   userType: 'makeup' | 'photographer' | 'couple';
   email: string;
+  avatar?: string;
   createAt?: Date;
 }
 
@@ -31,6 +32,9 @@ const UserSchema: Schema = new mongoose.Schema({
     type: String,
     required: true,
     enum: ['photographer', 'makeup', 'couple'],
+  },
+  avatar: {
+    type: String,
   },
   createAt: {
     type: Date,
