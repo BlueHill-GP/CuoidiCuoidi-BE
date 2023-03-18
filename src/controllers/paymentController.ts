@@ -6,6 +6,8 @@ import { createResponse as response } from '../utils/responseUtils';
 import Booking from '../models/booking';
 import { IBooking } from '../interfaces/module';
 import { mailPaymentSuccessful } from '../utils/mailUtils';
+import { getUserSocketId } from '../utils/socketIo';
+import { BookingNotification } from './testSocketIo';
 
 const viewPaySuccess = `
 <!DOCTYPE html>
@@ -39,10 +41,7 @@ function sortObject(obj) {
   return sorted;
 }
 
-export const handleVnPayIPN =  async(
-  req: Request,
-  res: Response,
-) => {
+export const handleVnPayIPN = async (req: Request, res: Response) => {
   const vnpParams = req.query as Record<string, string>;
   const secureHash = vnpParams['vnp_SecureHash'];
 
@@ -63,15 +62,20 @@ export const handleVnPayIPN =  async(
       BookingRedis.get(orderId, (err, reply) => {
         const booking: IBooking = JSON.parse(reply);
         try {
-          booking.paymentStatus = true
-          booking.bookingOrder = orderId
+          booking.paymentStatus = true;
+          booking.bookingOrder = orderId;
           delete booking._id;
           const newBooking = new Booking(booking);
           // gail notifications
-          mailPaymentSuccessful(newBooking.serviceId, newBooking.customerEmail);
+
+          mailPaymentSuccessful(
+            newBooking.serviceId,
+            newBooking.customerEmail,
+            newBooking
+          );
           newBooking.save();
-          
-         res.send(viewPaySuccess);
+
+          res.send(viewPaySuccess);
         } catch (error) {
           console.log(error);
           return response(res, 500, false, 'Internal server error');

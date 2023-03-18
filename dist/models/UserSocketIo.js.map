@@ -1,1 +1,1 @@
-{"version":3,"file":"UserSocketIo.js","sourceRoot":"","sources":["../../src/models/UserSocketIo.ts"],"names":[],"mappings":""}
+{"version":3,"file":"UserSocketIo.js","sourceRoot":"","sources":["../../src/models/UserSocketIo.ts"],"names":[],"mappings":";;;;;AAAA,wDAAmD;AAOnD,MAAM,gBAAgB,GAAW,IAAI,kBAAQ,CAAC,MAAM,CAAC;IAEnD,YAAY,EAAE;QACZ,IAAI,EAAE,MAAM;QACZ,QAAQ,EAAE,IAAI;KACf;CACF,CAAC,CAAC;AAEH,MAAM,UAAU,GAAuB,kBAAQ,CAAC,KAAK,CACnD,aAAa,EACb,gBAAgB,CACjB,CAAC;AAEF,kBAAe,UAAU,CAAC"}

@@ -63,7 +63,7 @@ const handleVnPayIPN = async (req, res) => {
                     delete booking._id;
                     const newBooking = new booking_1.default(booking);
                     // gail notifications
-                    (0, mailUtils_1.mailPaymentSuccessful)(newBooking.serviceId, newBooking.customerEmail);
+                    (0, mailUtils_1.mailPaymentSuccessful)(newBooking.serviceId, newBooking.customerEmail, newBooking);
                     newBooking.save();
                     res.send(viewPaySuccess);
                 }

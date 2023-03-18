@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.mailUpdateBookingStatus = exports.mailPaymentSuccessful = exports.mailRegister = void 0;
+const testSocketIo_1 = require("../controllers/testSocketIo");
 const servicePackage_1 = __importDefault(require("../models/servicePackage"));
 const mailerUtils_1 = require("./mailerUtils");
 const mailRegister = (otp, email) => {
@@ -11,8 +12,9 @@ const mailRegister = (otp, email) => {
     (0, mailerUtils_1.sendMail)(email, `OTP Cuoidi Cuoidi`, message);
 };
 exports.mailRegister = mailRegister;
-const mailPaymentSuccessful = async (serviceId, email) => {
+const mailPaymentSuccessful = async (serviceId, email, newBooking) => {
     try {
+        await (0, testSocketIo_1.BookingNotification)(newBooking.owenService, newBooking.customerId);
         const service = await servicePackage_1.default.findById(serviceId);
         const message = `You have just successfully paid for service package ${service.title} with amount ${service.price}. We will contact you as soon as our Photogapher/Makeup astist accepts your booking.`;
         (0, mailerUtils_1.sendMail)(email, `Cuoidi Cuoidi`, message);

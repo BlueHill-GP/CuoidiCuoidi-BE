@@ -6,6 +6,7 @@ import {
   updatePost,
   deletePost,
   getAllPostsByUserId,
+  handleLikePost,
 } from '../controllers/postController';
 import { checkImage } from '../middleware/validation';
 import { deleteImage } from '../utils/imageUtils';
@@ -34,6 +35,10 @@ router.put('/:id', verifyToken, updatePost);
 //desc delete a post
 //access private
 router.delete('/:id', verifyToken, deletePost);
+
+
+;
+router.get('/like/:id', verifyToken, handleLikePost);
 
 router.get('/delete', deleteImage);
 // router.get('/dedehehehe', run);
