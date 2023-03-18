@@ -28,6 +28,9 @@ const UserSchema = new mongoose_1.default.Schema({
         required: true,
         enum: ['photographer', 'makeup', 'couple'],
     },
+    avatar: {
+        type: String,
+    },
     createAt: {
         type: Date,
         default: Date.now,

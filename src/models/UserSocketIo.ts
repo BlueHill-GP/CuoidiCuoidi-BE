@@ -1,7 +1,7 @@
 import mongoose, { Model, Schema } from "mongoose";
 
 export  interface IUserSocket {
-
+  userId?:string;
   userSocketId: string;
 }
 
