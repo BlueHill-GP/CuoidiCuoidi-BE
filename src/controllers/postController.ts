@@ -17,7 +17,7 @@ const getPosts = async (req: AuthenticatedRequest, res: Response) => {
     const startIndex = (page - 1) * pageSize;
     const endIndex = startIndex + pageSize;
     const posts = await Post.find()
-      .populate('user', ['username'])
+      .populate('user', ['username', 'avatar'])
       .skip(startIndex)
       .limit(pageSize);
     res.status(200).json({
@@ -63,7 +63,7 @@ const getAllPostsByUserId = async (req: Request, res: Response) => {
     const startIndex = (page - 1) * pageSize;
     const endIndex = startIndex + pageSize;
     const posts = await Post.find({ user: userId }).populate('user', [
-      'username',
+      'username', 'avatar', 
     ]);
     // .skip(startIndex)
     // .limit(pageSize);

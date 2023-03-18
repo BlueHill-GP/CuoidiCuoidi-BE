@@ -34,8 +34,8 @@ const PostSchema = new mongoose_1.default.Schema({
         required: true,
     },
     like: {
-        type: (Array),
-        default: [],
+        type: Object,
+        default: {},
     },
     user: {
         type: mongoose_1.Schema.Types.ObjectId,

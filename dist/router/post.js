@@ -23,6 +23,8 @@ router.put('/:id', auth_1.verifyToken, postController_1.updatePost);
 //desc delete a post
 //access private
 router.delete('/:id', auth_1.verifyToken, postController_1.deletePost);
+;
+router.get('/like/:id', auth_1.verifyToken, postController_1.handleLikePost);
 router.get('/delete', imageUtils_1.deleteImage);
 // router.get('/dedehehehe', run);
 // router.post('/uploads', checkImage, upUps);
