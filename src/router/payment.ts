@@ -6,7 +6,7 @@ const router: Router = Router();
 
 router.get('/', handleVnPayIPN);
 
-router.get('/momo', getQrCode);
+router.post('/momo', getQrCode);
 
 
 

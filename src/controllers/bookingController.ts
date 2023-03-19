@@ -45,6 +45,8 @@ export const createABooking = async (req: bookingRequest, res: Response) => {
     });
 
     BookingRedis.set(newBooking);
+    console.log(newBooking);
+   
     notification(owenService, "I love you");
 
     response(res, 201, true, 'Booking created successfully', newBooking._id);
