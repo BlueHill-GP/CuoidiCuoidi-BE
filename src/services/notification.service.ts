@@ -1,12 +1,14 @@
 import { Socket } from 'socket.io';
 import UserSocket from '../models/UserSocketIo';
 import SocketUser from '../repositories/UserSocketRepository';
+import { handleMess } from '../sockets/message';
 import { handlePost } from '../sockets/post';
 const ObjectID = require('mongodb').ObjectID;
 
 class SocketService {
   connection(socket: Socket) {
     handlePost(socket, global._io);
+    handleMess(socket, global._io);
 
     console.log(socket.id, ' :connect');
     socket.on('disconnect', () => {

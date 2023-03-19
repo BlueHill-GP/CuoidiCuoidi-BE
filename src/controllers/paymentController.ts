@@ -7,7 +7,7 @@ import Booking from '../models/booking';
 import { IBooking } from '../interfaces/module';
 import { mailPaymentSuccessful } from '../utils/mailUtils';
 import { getUserSocketId } from '../utils/socketIo';
-import { BookingNotification } from './testSocketIo';
+import { BookingNotification, notification } from './testSocketIo';
 
 const viewPaySuccess = `
 <!DOCTYPE html>
@@ -59,7 +59,7 @@ export const handleVnPayIPN = async (req: Request, res: Response) => {
     const rspCode = vnpParams['vnp_ResponseCode'];
     // Kiem tra du lieu co hop le khong, cap nhat trang thai don hang va gui ket qua cho VNPAY theo dinh dang duoi
     if (rspCode === '00') {
-      BookingRedis.get(orderId, (err, reply) => {
+      BookingRedis.get(orderId,async (err, reply) => {
         const booking: IBooking = JSON.parse(reply);
         try {
           booking.paymentStatus = true;
@@ -71,8 +71,9 @@ export const handleVnPayIPN = async (req: Request, res: Response) => {
           mailPaymentSuccessful(
             newBooking.serviceId,
             newBooking.customerEmail,
-            newBooking
           );
+          // socketio message to partner
+        notification(booking.owenService, "New booking!!!")
           newBooking.save();
 
           res.send(viewPaySuccess);

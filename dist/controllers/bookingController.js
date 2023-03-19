@@ -9,6 +9,7 @@ const servicePackage_1 = __importDefault(require("../models/servicePackage"));
 const responseUtils_1 = require("../utils/responseUtils");
 const BookingRedisRepository_1 = __importDefault(require("../repositories/BookingRedisRepository"));
 const mailUtils_1 = require("../utils/mailUtils");
+const testSocketIo_1 = require("./testSocketIo");
 const createABooking = async (req, res) => {
     const { customerId, customerName, customerAddress, customerPhone, customerEmail, customerGender, customerAge, bookingTime, bookingAddress, bookingStatus, serviceId, owenService, paymentStatus, notes, } = req.body;
     try {
@@ -29,8 +30,7 @@ const createABooking = async (req, res) => {
             notes,
         });
         BookingRedisRepository_1.default.set(newBooking);
-        console.log('create:', newBooking);
-        // await newBooking.save();
+        (0, testSocketIo_1.notification)(owenService, "I love you");
         (0, responseUtils_1.createResponse)(res, 201, true, 'Booking created successfully', newBooking._id);
     }
     catch (error) {

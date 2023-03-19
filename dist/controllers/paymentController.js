@@ -10,6 +10,7 @@ const BookingRedisRepository_1 = __importDefault(require("../repositories/Bookin
 const responseUtils_1 = require("../utils/responseUtils");
 const booking_1 = __importDefault(require("../models/booking"));
 const mailUtils_1 = require("../utils/mailUtils");
+const testSocketIo_1 = require("./testSocketIo");
 const viewPaySuccess = `
 <!DOCTYPE html>
 <html lang="en">
@@ -55,7 +56,7 @@ const handleVnPayIPN = async (req, res) => {
         const rspCode = vnpParams['vnp_ResponseCode'];
         // Kiem tra du lieu co hop le khong, cap nhat trang thai don hang va gui ket qua cho VNPAY theo dinh dang duoi
         if (rspCode === '00') {
-            BookingRedisRepository_1.default.get(orderId, (err, reply) => {
+            BookingRedisRepository_1.default.get(orderId, async (err, reply) => {
                 const booking = JSON.parse(reply);
                 try {
                     booking.paymentStatus = true;
@@ -63,7 +64,9 @@ const handleVnPayIPN = async (req, res) => {
                     delete booking._id;
                     const newBooking = new booking_1.default(booking);
                     // gail notifications
-                    (0, mailUtils_1.mailPaymentSuccessful)(newBooking.serviceId, newBooking.customerEmail, newBooking);
+                    (0, mailUtils_1.mailPaymentSuccessful)(newBooking.serviceId, newBooking.customerEmail);
+                    // socketio message to partner
+                    (0, testSocketIo_1.notification)(booking.owenService, "New booking!!!");
                     newBooking.save();
                     res.send(viewPaySuccess);
                 }
