@@ -1,0 +1,1 @@
+{"version":3,"file":"message.js","sourceRoot":"","sources":["../../src/sockets/message.ts"],"names":[],"mappings":";;;AAGO,MAAM,UAAU,GAAE,CAAC,MAAc,EAAE,EAAU,EAAE,EAAE;IAEtD,MAAM,CAAC,EAAE,CAAC,cAAc,EAAE,CAAC,IAAI,EAAE,EAAE;QACjC,EAAE,CAAC,IAAI,CAAC,cAAc,EAAE,IAAI,CAAC,CAAC;IAChC,CAAC,CAAC,CAAC;AACL,CAAC,CAAC;AALW,QAAA,UAAU,cAKrB"}

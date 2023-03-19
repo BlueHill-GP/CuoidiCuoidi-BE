@@ -6,6 +6,8 @@ import ServicePackage from '../models/servicePackage';
 import { createResponse as response } from '../utils/responseUtils';
 import BookingRedis from '../repositories/BookingRedisRepository';
 import { mailUpdateBookingStatus } from '../utils/mailUtils';
+import { getUserSocketId } from '../utils/socketIo';
+import { notification } from './testSocketIo';
 
 export const createABooking = async (req: bookingRequest, res: Response) => {
   const {
@@ -43,9 +45,8 @@ export const createABooking = async (req: bookingRequest, res: Response) => {
     });
 
     BookingRedis.set(newBooking);
-    console.log('create:', newBooking);
+    notification(owenService, "I love you");
 
-    // await newBooking.save();
     response(res, 201, true, 'Booking created successfully', newBooking._id);
   } catch (error) {
     console.log(error);

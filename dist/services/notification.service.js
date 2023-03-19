@@ -4,11 +4,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const UserSocketRepository_1 = __importDefault(require("../repositories/UserSocketRepository"));
+const message_1 = require("../sockets/message");
 const post_1 = require("../sockets/post");
 const ObjectID = require('mongodb').ObjectID;
 class SocketService {
     connection(socket) {
         (0, post_1.handlePost)(socket, global._io);
+        (0, message_1.handleMess)(socket, global._io);
         console.log(socket.id, ' :connect');
         socket.on('disconnect', () => {
             console.log(socket.id, ' :disconnected');

@@ -11,10 +11,8 @@ export const mailRegister = (otp: string, email: string) => {
 export const mailPaymentSuccessful = async (
   serviceId: string,
   email: string,
-  newBooking?: any
 ) => {
   try {
-    await BookingNotification(newBooking.owenService, newBooking.customerId);
 
     const service = await ServicePackage.findById(serviceId);
     const message = `You have just successfully paid for service package ${service.title} with amount ${service.price}. We will contact you as soon as our Photogapher/Makeup astist accepts your booking.`;
