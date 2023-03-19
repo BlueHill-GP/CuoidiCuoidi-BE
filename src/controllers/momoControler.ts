@@ -1,20 +1,23 @@
-// const crypto = require('crypto');
-// const https = require('https');
+
+import express, { Request, Response } from 'express';
 
 import * as crypto from 'crypto';
 import * as https from 'https';
 
-export const getQrCode = (_, response) => {
+export const getQrCode = (request: Request, response: Response) => {
+  const { data } = request.body
+  console.log(data);
+  
   var partnerCode = 'MOMOYQUJ20220505';
   var accessKey = 'XXnuLiwlGqDbQ0Ve';
   var secretkey = '7gadnAGrhiHj5pPQrYyzuo0xdALj34Lr';
-  var requestId = partnerCode + new Date().getTime();
-  var orderId = requestId;
-  var orderInfo = 'pay from Dung Tran';
-  var redirectUrl = 'https://callback.url/notify';
-  var ipnUrl = 'https://callback.url/notify';
+  var requestId = data.bookingId;
+  var orderId = data.bookingId;
+  var orderInfo = 'Thanh toán gói dịch vụ';
+  var redirectUrl = 'http://localhost:4000/api/payment';
+  var ipnUrl = 'http://localhost:3000/user-booking';
   // var ipnUrl = redirectUrl = "https://webhook.site/454e7b77-f177-4ece-8236-ddf1c26ba7f8";
-  var amount = '50000';
+  var amount = data.price;
   var requestType = 'captureWallet';
   var extraData = ''; //pass empty value if your merchant does not have stores
 

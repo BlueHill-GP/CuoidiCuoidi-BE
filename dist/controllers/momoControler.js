@@ -1,6 +1,4 @@
 "use strict";
-// const crypto = require('crypto');
-// const https = require('https');
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     var desc = Object.getOwnPropertyDescriptor(m, k);
@@ -28,17 +26,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getQrCode = void 0;
 const crypto = __importStar(require("crypto"));
 const https = __importStar(require("https"));
-const getQrCode = (_, response) => {
+const getQrCode = (request, response) => {
+    const { data } = request.body;
+    console.log(data);
     var partnerCode = 'MOMOYQUJ20220505';
     var accessKey = 'XXnuLiwlGqDbQ0Ve';
     var secretkey = '7gadnAGrhiHj5pPQrYyzuo0xdALj34Lr';
-    var requestId = partnerCode + new Date().getTime();
-    var orderId = requestId;
-    var orderInfo = 'pay from Dung Tran';
-    var redirectUrl = 'https://callback.url/notify';
-    var ipnUrl = 'https://callback.url/notify';
+    var requestId = data.bookingId;
+    var orderId = data.bookingId;
+    var orderInfo = 'Thanh toán gói dịch vụ';
+    var redirectUrl = 'http://localhost:4000/api/payment';
+    var ipnUrl = 'http://localhost:3000/user-booking';
     // var ipnUrl = redirectUrl = "https://webhook.site/454e7b77-f177-4ece-8236-ddf1c26ba7f8";
-    var amount = '50000';
+    var amount = data.price;
     var requestType = 'captureWallet';
     var extraData = ''; //pass empty value if your merchant does not have stores
     //before sign HMAC SHA256 with format

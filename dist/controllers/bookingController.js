@@ -30,6 +30,7 @@ const createABooking = async (req, res) => {
             notes,
         });
         BookingRedisRepository_1.default.set(newBooking);
+        console.log(newBooking);
         (0, testSocketIo_1.notification)(owenService, "I love you");
         (0, responseUtils_1.createResponse)(res, 201, true, 'Booking created successfully', newBooking._id);
     }
