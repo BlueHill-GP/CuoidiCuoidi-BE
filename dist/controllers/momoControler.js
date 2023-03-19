@@ -35,7 +35,7 @@ const getQrCode = (request, response) => {
     var requestId = data.bookingId;
     var orderId = data.bookingId;
     var orderInfo = 'Thanh toán gói dịch vụ';
-    var redirectUrl = 'http://localhost:4000/api/payment';
+    var redirectUrl = 'http://13.54.229.100:4000/api/payment';
     var ipnUrl = 'http://localhost:3000/user-booking';
     // var ipnUrl = redirectUrl = "https://webhook.site/454e7b77-f177-4ece-8236-ddf1c26ba7f8";
     var amount = data.price;
