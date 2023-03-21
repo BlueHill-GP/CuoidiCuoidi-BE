@@ -31,7 +31,7 @@ app.use(fileUpload());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-const socketToUserMap = {};
+
 
 const server = http.createServer(app);
 const io = new Server(server, {

@@ -58,3 +58,37 @@ export const notification = async (receiver: string, message: string) => {
     }
 
 };
+
+export const sendDataAndNotification = async (sender: string,receiver: string, message: string,data:any) => {
+  try {
+    const senderSocketId = await getUserSocketId(sender);
+    const receiverSocketId = await getUserSocketId(receiver);
+    const socket1 = global._io.sockets.sockets.get(senderSocketId || sender);
+    const socket2 = global._io.sockets.sockets.get(receiverSocketId || receiver);
+    
+     global._io.to(socket1.id).emit('update-booking', { data: data });
+     global._io.to(socket2.id).emit('update-booking', { data: data });
+     global._io.to(socket2.id).emit('message', { data: message });
+  } catch (error) {
+    console.log(error);
+    
+  }
+
+}
+
+export const sendDataBooking = async (
+  receiver: string,
+  data: any
+) => {
+  try {
+    const receiverSocketId = await getUserSocketId(receiver);
+    const socket2 = global._io.sockets.sockets.get(
+      receiverSocketId || receiver
+    );
+    console.log('uar', data);
+
+    global._io.to(socket2.id).emit('new-booking', { data: data });
+  } catch (error) {
+    console.log(error);
+  }
+};

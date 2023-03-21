@@ -18,7 +18,7 @@ const viewMomo = `<!DOCTYPE html>
     <title>
     </title>
     <script>
-        window.location.href = 'http://localhost:3000';
+        window.location.href = 'http://13.54.229.100/user-booking';
     </script>
 </head>
 
@@ -46,7 +46,7 @@ align-items: center; justify-content: center; } .row{ justify-content: center !i
 } @media screen and (max-width: 667px){ .view-message .view-message__image { max-width: 4rem; } .view-message .view-message__title { font-size: 2rem; margin: 1rem; } .view-message .view-message__title__icon { font-size: 1.3rem; } .view-message .view-message__text { font-size: 1.1rem; }
 } </style>
 </head><body><div class="container"><a href="https://www.example.com" id="myLink"></a><div class="row"><div class="col-lg-8 mx-auto"><div class="view-message view-message--success text-center py-5 row"><img src="https://i.ibb.co/yByr2gQ/success.png" alt="success" class="view-message__image img-fluid"><h3 class="view-message__title">Payment Success <i class="far fa-check-circle view-message__title__icon"></i></h3><p class="view-message__text">Your payment is successfull Done !</p></div></div></div></div>
-</body><script>setTimeout(function () { window.location.href = 'http://localhost:3000'; console.log('ok'); }, 3000); </script></html>`;
+</body><script>setTimeout(function () { window.location.href = 'http://13.54.229.100/user-booking'; console.log('ok'); }, 3000); </script></html>`;
 function sortObject(obj) {
     let sorted = {};
     let str = [];
@@ -75,8 +75,9 @@ const handleVnPayIPN = async (req, res) => {
                 // gail notifications
                 (0, mailUtils_1.mailPaymentSuccessful)(newBooking.serviceId, newBooking.customerEmail);
                 // socketio message to partner
+                await newBooking.save();
                 (0, testSocketIo_1.notification)(booking.owenService, 'New booking momo!!!');
-                newBooking.save();
+                (0, testSocketIo_1.sendDataBooking)(booking.owenService, newBooking);
                 res.send(viewMomo);
             }
             catch (error) {
@@ -110,6 +111,7 @@ const handleVnPayIPN = async (req, res) => {
                         (0, mailUtils_1.mailPaymentSuccessful)(newBooking.serviceId, newBooking.customerEmail);
                         // socketio message to partner
                         (0, testSocketIo_1.notification)(booking.owenService, 'New booking!!!');
+                        (0, testSocketIo_1.sendDataBooking)(booking.owenService, newBooking);
                         newBooking.save();
                         res.send(viewVnpSuccess);
                     }

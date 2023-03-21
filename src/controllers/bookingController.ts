@@ -7,7 +7,7 @@ import { createResponse as response } from '../utils/responseUtils';
 import BookingRedis from '../repositories/BookingRedisRepository';
 import { mailUpdateBookingStatus } from '../utils/mailUtils';
 import { getUserSocketId } from '../utils/socketIo';
-import { notification } from './testSocketIo';
+import { notification, sendDataAndNotification } from './testSocketIo';
 
 export const createABooking = async (req: bookingRequest, res: Response) => {
   const {
@@ -47,7 +47,7 @@ export const createABooking = async (req: bookingRequest, res: Response) => {
     BookingRedis.set(newBooking);
     console.log(newBooking);
    
-    notification(owenService, "I love you");
+    notification(owenService, "booking test!!!");
 
     response(res, 201, true, 'Booking created successfully', newBooking._id);
   } catch (error) {
@@ -127,7 +127,12 @@ export const updateBookingStatus = async (
     if (!updateBooking) {
       return response(res, 404, false, 'updateBooking failed');
     }
-
+sendDataAndNotification(
+  updateBooking.owenService,
+  updateBooking.customerId,
+  'Your booking has been updated',
+  updateBooking
+);
     response(res, 200, true, 'Booking updated successfully', updateBooking);
     mailUpdateBookingStatus(updateBooking);
   } catch (error) {
@@ -142,54 +147,7 @@ export const getAllBookingByUser = async (
 ) => {
   const { userId } = req;
   try {
-    // const bookings = await Booking.aggregate([
-    // {
-    //   $lookup: {
-    //     from: 'servicePackages',
-    //     localField: 'serviceId',
-    //     foreignField: '_id',
-    //     as: 'servicePackages',
-    //   },
-    // },
-    // {
-    //   $unwind: '$servicePackages',
-    // },
-    // {
-    //   $match: {
-    //     'servicePackages.user': userId,
-    //   },
-    // },
-    // {
-    //   $lookup: {
-    //     from: 'servicePackages',
-    //     localField: 'servicePackageId',
-    //     foreignField: '_id',
-    //     as: 'servicePackages',
-    //   },
-    // },
-    // {
-    //   $match: {
-    //     'servicePackage.user': userId,
-    //   },
-    // },
-
-    //   {
-    //     $lookup: {
-    //       from: 'servicePackages',
-    //       localField: 'serviceId',
-    //       foreignField: '_id',
-    //       as: 'servicePackage',
-    //     },
-    //   },
-    //   {
-    //     $unwind: '$servicePackage',
-    //   },
-    //   {
-    //     $match: {
-    //       'servicePackage.user': userId,
-    //     },
-    //   },
-    // ]);
+   
     const bookings = await Booking.find({ owenService: userId });
     console.log(bookings);
     response(res, 200, true, 'get all bookings successfully', bookings);
@@ -198,3 +156,22 @@ export const getAllBookingByUser = async (
     return response(res, 500, false, 'Internal Server Error');
   }
 };
+
+
+export const getAllBookingOfCouple = async (
+  req: AuthenticatedRequest,
+  res: Response
+) => {
+  const { userId } = req;
+  console.log("adfasdf",userId);
+  
+  try {
+    const bookings = await Booking.find({ customerId: userId });
+    console.log(bookings);
+    response(res, 200, true, 'get all bookings successfully', bookings);
+  } catch (error) {
+    console.log(error);
+    return response(res, 500, false, 'Internal Server Error');
+  }
+};
+
