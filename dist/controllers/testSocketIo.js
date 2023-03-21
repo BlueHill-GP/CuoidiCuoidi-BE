@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.notification = exports.BookingNotification = exports.createPostNotify = void 0;
+exports.sendDataBooking = exports.sendDataAndNotification = exports.notification = exports.BookingNotification = exports.createPostNotify = void 0;
 const responseUtils_1 = require("../utils/responseUtils");
 const socketIo_1 = require("../utils/socketIo");
 const createPostNotify = async (req, res) => {
@@ -46,4 +46,31 @@ const notification = async (receiver, message) => {
     }
 };
 exports.notification = notification;
+const sendDataAndNotification = async (sender, receiver, message, data) => {
+    try {
+        const senderSocketId = await (0, socketIo_1.getUserSocketId)(sender);
+        const receiverSocketId = await (0, socketIo_1.getUserSocketId)(receiver);
+        const socket1 = global._io.sockets.sockets.get(senderSocketId || sender);
+        const socket2 = global._io.sockets.sockets.get(receiverSocketId || receiver);
+        global._io.to(socket1.id).emit('update-booking', { data: data });
+        global._io.to(socket2.id).emit('update-booking', { data: data });
+        global._io.to(socket2.id).emit('message', { data: message });
+    }
+    catch (error) {
+        console.log(error);
+    }
+};
+exports.sendDataAndNotification = sendDataAndNotification;
+const sendDataBooking = async (receiver, data) => {
+    try {
+        const receiverSocketId = await (0, socketIo_1.getUserSocketId)(receiver);
+        const socket2 = global._io.sockets.sockets.get(receiverSocketId || receiver);
+        console.log('uar', data);
+        global._io.to(socket2.id).emit('new-booking', { data: data });
+    }
+    catch (error) {
+        console.log(error);
+    }
+};
+exports.sendDataBooking = sendDataBooking;
 //# sourceMappingURL=testSocketIo.js.map

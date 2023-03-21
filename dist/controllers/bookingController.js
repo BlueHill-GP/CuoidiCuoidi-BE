@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAllBookingByUser = exports.updateBookingStatus = exports.updateBooking = exports.createABooking = void 0;
+exports.getAllBookingOfCouple = exports.getAllBookingByUser = exports.updateBookingStatus = exports.updateBooking = exports.createABooking = void 0;
 const booking_1 = __importDefault(require("../models/booking"));
 const servicePackage_1 = __importDefault(require("../models/servicePackage"));
 const responseUtils_1 = require("../utils/responseUtils");
@@ -31,7 +31,7 @@ const createABooking = async (req, res) => {
         });
         BookingRedisRepository_1.default.set(newBooking);
         console.log(newBooking);
-        (0, testSocketIo_1.notification)(owenService, "I love you");
+        (0, testSocketIo_1.notification)(owenService, "booking test!!!");
         (0, responseUtils_1.createResponse)(res, 201, true, 'Booking created successfully', newBooking._id);
     }
     catch (error) {
@@ -84,6 +84,7 @@ const updateBookingStatus = async (req, res) => {
         if (!updateBooking) {
             return (0, responseUtils_1.createResponse)(res, 404, false, 'updateBooking failed');
         }
+        (0, testSocketIo_1.sendDataAndNotification)(updateBooking.owenService, updateBooking.customerId, 'Your booking has been updated', updateBooking);
         (0, responseUtils_1.createResponse)(res, 200, true, 'Booking updated successfully', updateBooking);
         (0, mailUtils_1.mailUpdateBookingStatus)(updateBooking);
     }
@@ -96,53 +97,6 @@ exports.updateBookingStatus = updateBookingStatus;
 const getAllBookingByUser = async (req, res) => {
     const { userId } = req;
     try {
-        // const bookings = await Booking.aggregate([
-        // {
-        //   $lookup: {
-        //     from: 'servicePackages',
-        //     localField: 'serviceId',
-        //     foreignField: '_id',
-        //     as: 'servicePackages',
-        //   },
-        // },
-        // {
-        //   $unwind: '$servicePackages',
-        // },
-        // {
-        //   $match: {
-        //     'servicePackages.user': userId,
-        //   },
-        // },
-        // {
-        //   $lookup: {
-        //     from: 'servicePackages',
-        //     localField: 'servicePackageId',
-        //     foreignField: '_id',
-        //     as: 'servicePackages',
-        //   },
-        // },
-        // {
-        //   $match: {
-        //     'servicePackage.user': userId,
-        //   },
-        // },
-        //   {
-        //     $lookup: {
-        //       from: 'servicePackages',
-        //       localField: 'serviceId',
-        //       foreignField: '_id',
-        //       as: 'servicePackage',
-        //     },
-        //   },
-        //   {
-        //     $unwind: '$servicePackage',
-        //   },
-        //   {
-        //     $match: {
-        //       'servicePackage.user': userId,
-        //     },
-        //   },
-        // ]);
         const bookings = await booking_1.default.find({ owenService: userId });
         console.log(bookings);
         (0, responseUtils_1.createResponse)(res, 200, true, 'get all bookings successfully', bookings);
@@ -153,4 +107,18 @@ const getAllBookingByUser = async (req, res) => {
     }
 };
 exports.getAllBookingByUser = getAllBookingByUser;
+const getAllBookingOfCouple = async (req, res) => {
+    const { userId } = req;
+    console.log("adfasdf", userId);
+    try {
+        const bookings = await booking_1.default.find({ customerId: userId });
+        console.log(bookings);
+        (0, responseUtils_1.createResponse)(res, 200, true, 'get all bookings successfully', bookings);
+    }
+    catch (error) {
+        console.log(error);
+        return (0, responseUtils_1.createResponse)(res, 500, false, 'Internal Server Error');
+    }
+};
+exports.getAllBookingOfCouple = getAllBookingOfCouple;
 //# sourceMappingURL=bookingController.js.map

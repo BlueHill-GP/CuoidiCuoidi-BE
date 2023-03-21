@@ -28,7 +28,6 @@ app.use((0, cors_1.default)());
 app.use((0, express_fileupload_1.default)());
 app.use(body_parser_1.default.json());
 app.use(body_parser_1.default.urlencoded({ extended: true }));
-const socketToUserMap = {};
 const server = http_1.default.createServer(app);
 const io = new socket_io_1.Server(server, {
     cors: {

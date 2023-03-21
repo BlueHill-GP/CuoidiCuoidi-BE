@@ -14,7 +14,7 @@ const router = (0, express_1.Router)();
 //access private
 router.post('/', servicePackage_1.verifyPackageService, bookingController_1.createABooking);
 router.get('/user/', auth_1.verifyToken, bookingController_1.getAllBookingByUser);
-;
+router.get('/couple/', auth_1.verifyToken, bookingController_1.getAllBookingOfCouple);
 //@router PUT api/posts
 //desc update a post
 //access private
