@@ -189,7 +189,7 @@ const getRandomServicePackage = async (req: Request, res: Response) => {
     //   { $sample: { size: 5 } },
     // ]).populate('user', ['username']);
     const servicePackages = await ServicePackage.aggregate([
-      { $sample: { size: 5 } },
+      { $sample: { size: 30 } },
     ]).exec();
 
     await ServicePackage.populate(servicePackages, {
