@@ -58,14 +58,14 @@ const getAllPostsByUserId = async (req, res) => {
     try {
         const userId = req.params.id;
         const page = req.query.page || 1; // Default to page 1 if no page parameter is provided
-        const pageSize = 10; // Number of posts per page
+        const pageSize = 40; // Number of posts per page
         const startIndex = (page - 1) * pageSize;
         const endIndex = startIndex + pageSize;
         const posts = await Post_1.default.find({ user: userId }).populate('user', [
             'username', 'avatar',
-        ]);
-        // .skip(startIndex)
-        // .limit(pageSize);
+        ])
+            .skip(startIndex)
+            .limit(pageSize);
         (0, responseUtils_1.createResponse)(res, 200, true, 'get posts successfully', posts);
     }
     catch (error) {

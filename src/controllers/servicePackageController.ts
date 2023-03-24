@@ -23,7 +23,10 @@ import ServicePackage, { IServicePackage } from '../models/servicePackage';
 //   }
 // };
 
-const getAllServicePackagesByUserId = async (req: AuthenticatedRequest, res: Response) => {
+const getAllServicePackagesByUserId = async (
+  req: AuthenticatedRequest,
+  res: Response
+) => {
   try {
     const servicePackages = await ServicePackage.find({
       user: req.params.id,
@@ -47,11 +50,10 @@ const getAllServicePackagesById = async (
 ) => {
   try {
     console.log(req.params.id);
-    
+
     const servicePackages = await ServicePackage.findById(
-     req.params.id,
-    )
-      .populate('user', ['username']);
+      req.params.id
+    ).populate('user', ['username']);
     response(
       res,
       200,
@@ -146,7 +148,7 @@ const createServicePackage = async (
   req: AuthenticatedRequest,
   res: Response
 ) => {
-  const { title, description, price,location } = req.body;
+  const { title, description, price, location } = req.body;
 
   const files = Array.isArray(req.files.images)
     ? req.files.images
@@ -198,25 +200,57 @@ const getRandomServicePackage = async (req: Request, res: Response) => {
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
-}
-  
-const getServicePackagesByFilter = async (req: Request, res: Response) => { 
-  const { filter } = req.body
+};
+
+const getServicePackagesByFilter = async (req: Request, res: Response) => {
+  const { filter } = req.body;
   console.log(filter);
-  
 
-    try {
-      // Find all the service packages with the given location
-      const servicePackages = await ServicePackage.find({ location: filter.selectedLocation });
+  try {
+    // Find all the service packages with the given location
+    const servicePackages = await ServicePackage.find({
+      location: filter.selectedLocation,
+    });
 
-      // Return the filtered service packages
-      res.json(servicePackages);
-    } catch (error) {
-      console.error(error.message);
-      res.status(500).send('Server Error');
-    }
+    // Return the filtered service packages
+    res.json(servicePackages);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send('Server Error');
+  }
+};
+
+interface SearchQuery {
+  title?: string;
+  user?: string;
+  price?: number;
+  location?: string;
 }
 
+interface IFilters {
+  title:any;
+  user: string;
+  price: number;
+  location: any;
+}
+const searchServicePackages = async (
+  req: Request<any, any, any, Partial<SearchQuery>>,
+  res: Response
+) => {
+  const { title, user, price } = req.query;
+  const filters: IFilters = { title, user, price, location };
+  if (title) filters.title = { $regex: title, $options: 'i' };
+  if (user) filters.user = user;
+  if (price) filters.price = price;
+  if (location) filters.location = { $regex: location, $options: 'i' };
+  try {
+    const servicePackages = await ServicePackage.find(filters).populate('user');
+    res.json(servicePackages);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+};
 export {
   createServicePackage,
   updateServicePackage,
@@ -225,4 +259,5 @@ export {
   getAllServicePackagesById,
   getRandomServicePackage,
   getServicePackagesByFilter,
+  searchServicePackages,
 };

@@ -50,6 +50,9 @@ const UserInfoSchema = new mongoose_1.default.Schema({
     avatar: {
         type: String,
     },
+    desc: {
+        type: String,
+    },
     age: {
         type: Number,
     },

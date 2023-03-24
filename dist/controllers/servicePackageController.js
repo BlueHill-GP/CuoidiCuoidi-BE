@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getServicePackagesByFilter = exports.getRandomServicePackage = exports.getAllServicePackagesById = exports.getAllServicePackagesByUserId = exports.deleteServicePackage = exports.updateServicePackage = exports.createServicePackage = void 0;
+exports.searchServicePackages = exports.getServicePackagesByFilter = exports.getRandomServicePackage = exports.getAllServicePackagesById = exports.getAllServicePackagesByUserId = exports.deleteServicePackage = exports.updateServicePackage = exports.createServicePackage = void 0;
 const responseUtils_1 = require("../utils/responseUtils");
 const imageUtils_1 = require("../utils/imageUtils");
 const servicePackage_1 = __importDefault(require("../models/servicePackage"));
@@ -40,8 +40,7 @@ exports.getAllServicePackagesByUserId = getAllServicePackagesByUserId;
 const getAllServicePackagesById = async (req, res) => {
     try {
         console.log(req.params.id);
-        const servicePackages = await servicePackage_1.default.findById(req.params.id)
-            .populate('user', ['username']);
+        const servicePackages = await servicePackage_1.default.findById(req.params.id).populate('user', ['username']);
         (0, responseUtils_1.createResponse)(res, 200, true, 'Get service packages successfully', servicePackages);
     }
     catch (error) {
@@ -152,7 +151,9 @@ const getServicePackagesByFilter = async (req, res) => {
     console.log(filter);
     try {
         // Find all the service packages with the given location
-        const servicePackages = await servicePackage_1.default.find({ location: filter.selectedLocation });
+        const servicePackages = await servicePackage_1.default.find({
+            location: filter.selectedLocation,
+        });
         // Return the filtered service packages
         res.json(servicePackages);
     }
@@ -162,4 +163,25 @@ const getServicePackagesByFilter = async (req, res) => {
     }
 };
 exports.getServicePackagesByFilter = getServicePackagesByFilter;
+const searchServicePackages = async (req, res) => {
+    const { title, user, price } = req.query;
+    const filters = { title, user, price, location };
+    if (title)
+        filters.title = { $regex: title, $options: 'i' };
+    if (user)
+        filters.user = user;
+    if (price)
+        filters.price = price;
+    if (location)
+        filters.location = { $regex: location, $options: 'i' };
+    try {
+        const servicePackages = await servicePackage_1.default.find(filters).populate('user');
+        res.json(servicePackages);
+    }
+    catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+};
+exports.searchServicePackages = searchServicePackages;
 //# sourceMappingURL=servicePackageController.js.map

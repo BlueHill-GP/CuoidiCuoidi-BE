@@ -6,6 +6,7 @@ import {
   getAllServicePackagesByUserId,
   getRandomServicePackage,
   getServicePackagesByFilter,
+  searchServicePackages,
   updateServicePackage,
 } from '../controllers/servicePackageController';
 import { verifyToken, verifyTypeUser } from '../middleware/auth';
@@ -23,6 +24,7 @@ router.get('/id/:id', getAllServicePackagesById);
 router.get('/random', getRandomServicePackage);
 
 router.post('/filter', getServicePackagesByFilter);
+router.post('/search', searchServicePackages);
 
 //@router POST api/posts
 //desc Creates a post

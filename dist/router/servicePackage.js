@@ -12,6 +12,7 @@ router.get('/user/:id', auth_1.verifyToken, servicePackageController_1.getAllSer
 router.get('/id/:id', servicePackageController_1.getAllServicePackagesById);
 router.get('/random', servicePackageController_1.getRandomServicePackage);
 router.post('/filter', servicePackageController_1.getServicePackagesByFilter);
+router.post('/search', servicePackageController_1.searchServicePackages);
 //@router POST api/posts
 //desc Creates a post
 //access private
