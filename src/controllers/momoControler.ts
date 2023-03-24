@@ -5,9 +5,9 @@ import * as crypto from 'crypto';
 import * as https from 'https';
 
 export const getQrCode = (request: Request, response: Response) => {
-  const { data } = request.body
+  const { data } = request.body;
   console.log(data);
-  
+
   var partnerCode = 'MOMOYQUJ20220505';
   var accessKey = 'XXnuLiwlGqDbQ0Ve';
   var secretkey = '7gadnAGrhiHj5pPQrYyzuo0xdALj34Lr';

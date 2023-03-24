@@ -10,6 +10,7 @@ export interface IUserInfo extends Document {
   gender?: 'male' | 'female' | 'another';
   avatar?: string;
   age?: number;
+  desc?: string;
   createAt?: Date;
 }
 
@@ -37,6 +38,9 @@ const UserInfoSchema: Schema = new mongoose.Schema({
     enum: ['male', 'female', 'another'],
   },
   avatar: {
+    type: String,
+  },
+  desc: {
     type: String,
   },
   age: {

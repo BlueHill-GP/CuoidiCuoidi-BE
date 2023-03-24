@@ -7,11 +7,10 @@ import User from '../models/User';
 
 export const getUserById = async (req: Request, res: Response) => {
   try {
-    const user = await UserInfo.find({ userId: req.params.id })
-      .populate(
-        'userId',
-        ['email', 'avatar', ]
-      );
+    const user = await UserInfo.find({ userId: req.params.id }).populate(
+      'userId',
+      ['email', 'avatar']
+    );
     response(res, 200, true, 'Get user successfully', user[0]);
   } catch (error) {
     console.log(error);
@@ -19,10 +18,10 @@ export const getUserById = async (req: Request, res: Response) => {
   }
 };
 
-
-
-export const updateAvatar = async (req: AuthenticatedRequest, res: Response) => {
-
+export const updateAvatar = async (
+  req: AuthenticatedRequest,
+  res: Response
+) => {
   const files = Array.isArray(req.files.images)
     ? req.files.images
     : [req.files.images];
@@ -37,15 +36,43 @@ export const updateAvatar = async (req: AuthenticatedRequest, res: Response) => 
     }
     console.log('log id: ', req.userId);
 
-    const userUpdated = await User.findByIdAndUpdate(req.userId, {
-    avatar: results[0]
-  },{new: true});
-  
+    const userUpdated = await User.findByIdAndUpdate(
+      req.userId,
+      {
+        avatar: results[0],
+      },
+      { new: true }
+    );
 
     return res.status(200).json({
       success: true,
       message: 'Update avatar successfully',
-       userUpdated,
+      userUpdated,
+    });
+  } catch (error) {
+    console.log(error);
+    return response(res, 500, false, 'Internal Server Error');
+  }
+};
+
+export const updateDesc = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { desc } = req.body;
+    console.log("desc   ",desc)
+    console.log('log id: ', req.userId);
+
+    const userUpdated = await UserInfo.findOneAndUpdate(
+      { userId: req.userId },
+      {
+        desc: desc,
+      },
+      { new: true }
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: 'Update desc successfully',
+      userUpdated,
     });
   } catch (error) {
     console.log(error);
